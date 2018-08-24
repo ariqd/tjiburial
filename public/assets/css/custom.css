@@ -1,0 +1,66 @@
+/*GRAVITY*/
+@font-face {
+    src: url('../fonts/gravity/Gravity-UltraLight.otf');
+    font-family: 'gravity ultralight';
+}
+@font-face {
+    src: url('../fonts/gravity/Gravity-Light.otf');
+    font-family: 'gravity light';
+}
+@font-face {
+    src: url('../fonts/gravity/Gravity-Regular.otf');
+    font-family: 'gravity regular';
+}
+@font-face {
+    src: url('../fonts/gravity/Gravity-Bold.otf');
+    font-family: 'gravity bold';
+}
+@font-face {
+    src: url('../fonts/gravity/Gravity-Book.otf');
+    font-family: 'gravity book';
+}
+
+* {
+    font-family: 'gravity light';
+}
+
+body {
+    background: url("../images/bgt.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    /*opacity: 0.8;*/
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'gravity regular';
+}
+
+.navbar {
+    opacity: 0.9;
+    z-index: 2;
+}
+.nav-item{
+    padding-right: 20px;
+}
+.nav-item.active .nav-link{
+    border-bottom: 1px solid #4DE100;
+}
+.no-underline:hover {
+    text-decoration: none;
+}
+.btn-tjiburial {
+    background: #349800;
+    color: #fff;
+}
+.btn-tjiburial:hover {
+    background: #457F26;
+}
+
+ul.simple {
+    margin-left: 0;
+    padding-left: 0;
+    /*text-decoration: none;*/
+    list-style: none;
+}
