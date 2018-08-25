@@ -79,7 +79,7 @@
                         <form action="{{ url('book/book-now') }}" method="post">
                             {{ csrf_field() }}
                             <div class="form-row">
-                                <div class="col-lg-3">
+                                <div class="col-lg-2">
                                     <div class="form-group">
                                         <label for="title">Title <span class="required">*</span></label>
                                         <select name="title" id="title" class="custom-select">
@@ -89,10 +89,16 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-9">
+                                <div class="col-lg-5">
                                     <div class="form-group">
-                                        <label for="name">Full Name <span class="required">*</span></label>
-                                        <input type="text" class="form-control" id="name" name="name" value="{{ (@old('name')) ? old('name') : @$guest->name }}">
+                                        <label for="first_name">First Name <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ (@old('first_name')) ? old('first_name') : '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group">
+                                        <label for="last_name">Last Name <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ (@old('last_name')) ? old('last_name') : '' }}">
                                     </div>
                                 </div>
                             </div>
@@ -165,25 +171,25 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="province" class="bmd-label-floating">Province / State <span class="required">*</span></label>
-                                            <input type="text" class="form-control" id="province" data-name="[state]" name="state">
+                                            <input type="text" class="form-control" id="province" data-name="[state]" name="state" value="{{ @old('state') ? old('state') : '' }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="city" class="bmd-label-floating">City <span class="required">*</span></label>
-                                            <input type="text" class="form-control" id="city" data-name="[city]" name="city">
+                                            <input type="text" class="form-control" id="city" data-name="[city]" name="city" value="{{ @old('state') ? old('state') : '' }}">
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label for="postal" class="bmd-label-floating">Postal Code <span class="required">*</span></label>
-                                            <input type="text" class="form-control" id="postal" data-name="[postal]" name="postal">
+                                            <input type="text" class="form-control" id="postal" data-name="[postal]" name="postal" value="{{ @old('state') ? old('state') : ''}}">
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
                                             <label for="address" class="bmd-label-floating">Address <span class="required">*</span></label>
-                                            <textarea name="address" id="address" rows="5" class="form-control"></textarea>
+                                            <textarea name="address" id="address" rows="5" class="form-control">{{ @old('address') ? old('address') : ''}}</textarea>
                                         </div>
                                     </div>
                                 </div>

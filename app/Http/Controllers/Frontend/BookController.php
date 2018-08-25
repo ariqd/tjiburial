@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Booking;
 use App\Reservation;
 use App\Room;
+use App\Veritrans\Midtrans;
+use App\Veritrans\Veritrans;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -13,6 +15,12 @@ use Illuminate\Support\Facades\Validator;
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        Veritrans::$serverKey = '';
+        Veritrans::$isProduction = false;
+    }
+
     public function index()
     {
         $data['rooms'] = Room::all();
@@ -122,22 +130,25 @@ class BookController extends Controller
 
         $validate = Validator::make($input, [
             'title' => 'required',
-            'name' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
             'email' => 'required|email',
             'country' => 'required',
             'state' => 'required',
             'city' => 'required',
             'address' => 'required',
+            'postal' => 'required',
             'dob.day' => 'required',
             'dob.month' => 'required',
             'dob.year' => 'required',
             'phone_code' => 'required',
-            'phone_no' => 'required|numeric|digits_between:9,14',
+            'phone_no' => 'required|numeric|digits_between:5,14',
         ]);
 
         $validate->setAttributeNames([
             'title' => 'Mr. / Mrs. / Ms.',
-            'name' => 'Name',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
             'country' => 'Country',
             'state' => 'State / Province',
             'city' => 'City',
@@ -148,6 +159,7 @@ class BookController extends Controller
             'phone_code' => 'Phone Code Number',
             'phone_no' => 'Phone Number',
             'email' => 'Email',
+            'postal' => 'Postal Code',
         ]);
 
         if($validate->fails()){// if validation fail
@@ -155,6 +167,7 @@ class BookController extends Controller
                 ->withErrors($validate->errors())->withInput($input);
         }else{
             $input['dob'] = Carbon::create($input['dob']['year'], $input['dob']['month'], $input['dob']['day']);
+            $input['name'] = $input['first_name'] . ' ' . $input['last_name'];
 //            unset($input['dob']['year'])
 //            dd($input);
             $request->session()->put('booking', $input);
@@ -175,8 +188,147 @@ class BookController extends Controller
     {
         $data['reservation'] = session('reservation');
         $data['booking'] = session('booking');
-//        dd($data);
         $data['room'] = Room::find($data['reservation']['room_id']);
+//        dd($data);
         return view('frontend.book.payment', $data);
+    }
+
+    public function token($token_id)
+    {
+        $items = [];
+        $reservation = session('reservation');
+        $booking = session('booking');
+        $gross_amount = $reservation['total'] * $reservation['room_count'];
+        $room = Room::find($reservation['room_id']);
+
+        // Start Midtrans payment
+//        error_log('Masuk ke snap token dri ajax');
+//        $midtrans = new Midtrans;
+
+        $transaction_details = array(
+            'order_id'      => uniqid(),
+            'gross_amount'  => $gross_amount
+        );
+
+        $items = [
+            'id'            => $room->slug,
+            'price'         => $reservation['total'],
+            'quantity'      => $reservation['room_count'],
+            'name'          => $room->name
+        ];
+//
+//        $billing_address = [
+//            'first_name'    => $booking['first_name'],
+//            'last_name'     => $booking['last_name'],
+//            'address'       => $booking['address'],
+//            'city'          => $booking['city'],
+//            'postal_code'   => $booking['postal'],
+//            'phone'         => $booking['phone_code'].$booking['phone_no'],
+//        ];
+//
+//        $shipping_address = [
+//            'first_name'    => $booking['first_name'],
+//            'last_name'     => $booking['last_name'],
+//            'address'       => $booking['address'],
+//            'city'          => $booking['city'],
+//            'postal_code'   => $booking['postal'],
+//            'phone'         => $booking['phone_code'].$booking['phone_no'],
+//        ];
+//
+//        $customer_details = array(
+//            'first_name'      => $booking['first_name'],
+//            'last_name'       => $booking['last_name'],
+//            'email'           => $booking['email'],
+//            'phone'           => $booking['phone_code'].$booking['phone_no'],
+//            'billing_address' => $billing_address,
+//            'shipping_address'=> $shipping_address
+//        );
+
+        // Data yang akan dikirim untuk request redirect_url.
+//        $credit_card['secure'] = true;
+        //ser save_card true to enable oneclick or 2click
+        //$credit_card['save_card'] = true;
+
+        $time = time();
+        $custom_expiry = array(
+            'start_time' => date("Y-m-d H:i:s O",$time),
+            'unit'       => 'hour',
+            'duration'   => 2
+        );
+
+        $transaction_data = array(
+            'transaction_details'=> $transaction_details,
+            'item_details'       => $items,
+//            'customer_details'   => $customer_details,
+//            'credit_card'        => $credit_card,
+            'payment_type' => 'credit_card',
+            'credit_card'  => array(
+                'token_id'      => $token_id,
+                'bank'          => 'bni',
+//                'save_token_id' => isset($_POST['save_cc'])
+            ),
+            'expiry'             => $custom_expiry
+        );
+
+        $vt = new Veritrans;
+        $response = $vt->vtdirect_charge($transaction_data);
+
+        // Success
+        if($response->transaction_status == 'capture') {
+            echo "<p>Transaksi berhasil.</p>";
+            echo "<p>Status transaksi untuk order id $response->order_id: " .
+                "$response->transaction_status</p>";
+
+            echo "<h3>Detail transaksi:</h3>";
+            echo "<pre>";
+            var_dump($response);
+            echo "</pre>";
+        }
+
+        // Deny
+        else if($response->transaction_status == 'deny') {
+            echo "<p>Transaksi ditolak.</p>";
+            echo "<p>Status transaksi untuk order id .$response->order_id: " .
+                "$response->transaction_status</p>";
+
+            echo "<h3>Detail transaksi:</h3>";
+            echo "<pre>";
+            var_dump($response);
+            echo "</pre>";
+        }
+
+        // Challenge
+        else if($response->transaction_status == 'challenge') {
+            echo "<p>Transaksi challenge.</p>";
+            echo "<p>Status transaksi untuk order id $response->order_id: " .
+                "$response->transaction_status</p>";
+
+            echo "<h3>Detail transaksi:</h3>";
+            echo "<pre>";
+            var_dump($response);
+            echo "</pre>";
+        }
+
+        // Error
+        else {
+            echo "<p>Terjadi kesalahan pada data transaksi yang dikirim.</p>";
+            echo "<p>Status message: [$response->status_code] " .
+                "$response->status_message</p>";
+
+            echo "<pre>";
+            var_dump($response);
+            echo "</pre>";
+        }
+
+//        try
+//        {
+//            $snap_token = $midtrans->getSnapToken($transaction_data);
+//            //return redirect($vtweb_url);
+//            echo $snap_token;
+//        }
+//        catch (Exception $e)
+//        {
+//            return $e->getMessage;
+//        }
     }
 }
