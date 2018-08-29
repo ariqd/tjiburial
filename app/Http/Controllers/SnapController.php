@@ -10,8 +10,8 @@ use App\Veritrans\Midtrans;
 class SnapController extends Controller
 {
     public function __construct()
-    {   
-        Midtrans::$serverKey = 'your server key';
+    {
+        Midtrans::$serverKey = 'SB-Mid-server-F8a44BVHzPec2ql3UiiU7QvR';
         //set is production to true for production mode
         Midtrans::$isProduction = false;
     }
@@ -21,7 +21,7 @@ class SnapController extends Controller
         return view('snap_checkout');
     }
 
-    public function token() 
+    public function token()
     {
         error_log('masuk ke snap token dri ajax');
         $midtrans = new Midtrans;
@@ -87,10 +87,10 @@ class SnapController extends Controller
         $time = time();
         $custom_expiry = array(
             'start_time' => date("Y-m-d H:i:s O",$time),
-            'unit'       => 'hour', 
+            'unit'       => 'hour',
             'duration'   => 2
         );
-        
+
         $transaction_data = array(
             'transaction_details'=> $transaction_details,
             'item_details'       => $items,
@@ -98,15 +98,18 @@ class SnapController extends Controller
             'credit_card'        => $credit_card,
             'expiry'             => $custom_expiry
         );
-    
+
         try
         {
             $snap_token = $midtrans->getSnapToken($transaction_data);
             //return redirect($vtweb_url);
-            echo $snap_token;
-        } 
-        catch (Exception $e) 
-        {   
+//            echo $snap_token;
+            $credit_card['token_id'] = $snap_token;
+//            session()->put('snap_token', $snap_token);
+//            return redirect('/book/checkout');
+        }
+        catch (Exception $e)
+        {
             return $e->getMessage;
         }
     }
@@ -134,7 +137,7 @@ class SnapController extends Controller
 
         error_log(print_r($result,TRUE));
 
-        /*
+
         $transaction = $notif->transaction_status;
         $type = $notif->payment_type;
         $order_id = $notif->order_id;
@@ -147,7 +150,7 @@ class SnapController extends Controller
               // TODO set payment status in merchant's database to 'Challenge by FDS'
               // TODO merchant should decide whether this transaction is authorized or not in MAP
               echo "Transaction order_id: " . $order_id ." is challenged by FDS";
-              } 
+              }
               else {
               // TODO set payment status in merchant's database to 'Success'
               echo "Transaction order_id: " . $order_id ." successfully captured using " . $type;
@@ -157,15 +160,15 @@ class SnapController extends Controller
         else if ($transaction == 'settlement'){
           // TODO set payment status in merchant's database to 'Settlement'
           echo "Transaction order_id: " . $order_id ." successfully transfered using " . $type;
-          } 
+          }
           else if($transaction == 'pending'){
           // TODO set payment status in merchant's database to 'Pending'
           echo "Waiting customer to finish transaction order_id: " . $order_id . " using " . $type;
-          } 
+          }
           else if ($transaction == 'deny') {
           // TODO set payment status in merchant's database to 'Denied'
           echo "Payment using " . $type . " for transaction order_id: " . $order_id . " is denied.";
-        }*/
-   
+        }
+
     }
-}    
+}

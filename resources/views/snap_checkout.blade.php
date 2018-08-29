@@ -3,7 +3,7 @@
   <head>
     <script type="text/javascript"
             src="https://app.sandbox.midtrans.com/snap/snap.js"
-            data-client-key="<CLIENT-KEY>"></script>
+            data-client-key="SB-Mid-client-VhrdXfsNQARuMh4z"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   </head>
   <body>
@@ -24,7 +24,7 @@
     
     $.ajax({
       
-      url: './snaptoken',
+      url: '{{ url('book/checkout') }}',
       cache: false,
 
       success: function(data) {

@@ -260,16 +260,16 @@
                             @foreach($reservation['pricing'] as $key => $value)
                                 <tr>
                                     <td>{{ $value['date'] }}</td>
-                                    <td>{{ $key > 1 ? '+' : '' }} Rp {{ number_format($value['price'], 0, ',', '.') }}</td>
+                                    <td class="text-right">{{ $key > 1 ? '+' : '' }} Rp {{ number_format($value['price'], 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                             <tr>
                                 <td><b>Price / room</b></td>
-                                <td><b>Rp {{ number_format($reservation['total'], 0, ',', '.') }}</b></td>
+                                <td class="text-right"><b>Rp {{ number_format($reservation['total'], 0, ',', '.') }}</b></td>
                             </tr>
                             <tr>
                                 <td>x No. of Rooms</td>
-                                <td>x {{ $reservation['room_count'] }}</td>
+                                <td class="text-right">x {{ $reservation['room_count'] }}</td>
                             </tr>
                             <tr>
                                 <td colspan="2">

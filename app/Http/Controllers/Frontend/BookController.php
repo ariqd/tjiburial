@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Booking;
+use App\Http\Controllers\SnapController;
+use App\Http\Controllers\TransactionController;
 use App\Reservation;
 use App\Room;
 use App\Veritrans\Midtrans;
@@ -12,14 +14,23 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use SebastianBergmann\Comparator\Book;
 
 class BookController extends Controller
 {
+    public $snapController;
+    public $transactionController;
+
     public function __construct()
     {
-        Veritrans::$serverKey = '';
-        Veritrans::$isProduction = false;
+        $this->snapController = new SnapController();
+        $this->transactionController = new TransactionController();
     }
+//    public function __construct()
+//    {
+//        Veritrans::$serverKey = 'SB-Mid-server-F8a44BVHzPec2ql3UiiU7QvR';
+//        Veritrans::$isProduction = false;
+//    }
 
     public function index()
     {
@@ -189,146 +200,142 @@ class BookController extends Controller
         $data['reservation'] = session('reservation');
         $data['booking'] = session('booking');
         $data['room'] = Room::find($data['reservation']['room_id']);
+        $data['payments'] = [
+            'credit_card' => [
+                'name' => 'Credit Card',
+                'values' => [
+                    'bca' => 'BCA',
+                    'bni' => 'BNI',
+                    'mandiri' => 'Mandiri',
+                    'cimb' => 'CIMB',
+                    'bri' => 'BRI',
+                    'danamon' => 'Danamon',
+                    'maybank' => 'Maybank',
+                    'mega' => 'Mega'
+                ],
+            ],
+            'others' => [
+                'name' => 'Others',
+                'values' => [
+                    'onsite' => 'Directly at Hotel'
+                ]
+            ]
+        ];
 //        dd($data);
         return view('frontend.book.payment', $data);
     }
 
-    public function token($token_id)
+    public function snap()
     {
-        $items = [];
+        $reservation = session('reservation');
+        $data['room'] = Room::find($reservation['room_id']);
+        $data['snap_token'] = session('snap_token');
+        $data['payment_type'] = session('payment_type');
+        return view('checkout', $data);
+    }
+
+    public function token()
+    {
         $reservation = session('reservation');
         $booking = session('booking');
         $gross_amount = $reservation['total'] * $reservation['room_count'];
         $room = Room::find($reservation['room_id']);
 
-        // Start Midtrans payment
-//        error_log('Masuk ke snap token dri ajax');
-//        $midtrans = new Midtrans;
+        $transaction_details = [
+            'order_id' => time(),
+            'gross_amount' => $gross_amount
+        ];
 
-        $transaction_details = array(
-            'order_id'      => uniqid(),
-            'gross_amount'  => $gross_amount
-        );
+        $address = $booking['address'] . ', ' . $booking['city'] . ', ' . $booking['state'] . ', ' . $booking['country'];
 
-        $items = [
+        $customer_details = [
+            'first_name'    => $booking['first_name'],
+            'last_name'     => $booking['last_name'],
+            'email'         => $booking['email'],
+            'phone'         => $booking['phone_code'].$booking['phone_no'],
+            'address'       => $address
+        ];
+
+        $custom_expiry = [
+            'start_time' => date("Y-m-d H:i:s O", time()),
+            'unit' => 'day',
+            'duration' => 2
+        ];
+
+        $item_details = [
             'id'            => $room->slug,
             'price'         => $reservation['total'],
             'quantity'      => $reservation['room_count'],
             'name'          => $room->name
         ];
-//
-//        $billing_address = [
-//            'first_name'    => $booking['first_name'],
-//            'last_name'     => $booking['last_name'],
-//            'address'       => $booking['address'],
-//            'city'          => $booking['city'],
-//            'postal_code'   => $booking['postal'],
-//            'phone'         => $booking['phone_code'].$booking['phone_no'],
-//        ];
-//
-//        $shipping_address = [
-//            'first_name'    => $booking['first_name'],
-//            'last_name'     => $booking['last_name'],
-//            'address'       => $booking['address'],
-//            'city'          => $booking['city'],
-//            'postal_code'   => $booking['postal'],
-//            'phone'         => $booking['phone_code'].$booking['phone_no'],
-//        ];
-//
-//        $customer_details = array(
-//            'first_name'      => $booking['first_name'],
-//            'last_name'       => $booking['last_name'],
-//            'email'           => $booking['email'],
-//            'phone'           => $booking['phone_code'].$booking['phone_no'],
-//            'billing_address' => $billing_address,
-//            'shipping_address'=> $shipping_address
-//        );
 
-        // Data yang akan dikirim untuk request redirect_url.
-//        $credit_card['secure'] = true;
-        //ser save_card true to enable oneclick or 2click
-        //$credit_card['save_card'] = true;
+        // Send this options if you use 3Ds in credit card request
+        $credit_card_option = [
+            'secure' => true,
+            'channel' => 'migs'
+        ];
 
-        $time = time();
-        $custom_expiry = array(
-            'start_time' => date("Y-m-d H:i:s O",$time),
-            'unit'       => 'hour',
-            'duration'   => 2
-        );
+        $transaction_data = [
+            'transaction_details' => $transaction_details,
+            'item_details' => $item_details,
+            'customer_details' => $customer_details,
+            'expiry' => $custom_expiry,
+//                'credit_card' => $credit_card_option,
+        ];
 
-        $transaction_data = array(
-            'transaction_details'=> $transaction_details,
-            'item_details'       => $items,
-//            'customer_details'   => $customer_details,
-//            'credit_card'        => $credit_card,
-            'payment_type' => 'credit_card',
-            'credit_card'  => array(
-                'token_id'      => $token_id,
-                'bank'          => 'bni',
-//                'save_token_id' => isset($_POST['save_cc'])
-            ),
-            'expiry'             => $custom_expiry
-        );
+        try
+        {
+            $midtrans = new Midtrans;
+            $snap_token = $midtrans->getSnapToken($transaction_data);
+            //return redirect($vtweb_url);
+            echo $snap_token;
+        }
+        catch (Exception $e)
+        {
+            return $e->getMessage;
+        }
+    }
 
-        $vt = new Veritrans;
-        $response = $vt->vtdirect_charge($transaction_data);
+    public function pay(Request $request)
+    {
+        $input = $request->all();
+        unset($input['_token']);
+//        dd($input);
+        $reservation = session('reservation');
+        $booking = session('booking');
+        $gross_amount = $reservation['total'] * $reservation['room_count'];
+        $room = Room::find($reservation['room_id']);
 
-        // Success
-        if($response->transaction_status == 'capture') {
-            echo "<p>Transaksi berhasil.</p>";
-            echo "<p>Status transaksi untuk order id $response->order_id: " .
-                "$response->transaction_status</p>";
-
-            echo "<h3>Detail transaksi:</h3>";
-            echo "<pre>";
-            var_dump($response);
-            echo "</pre>";
+        unset($reservation['pricing']);
+        $reservation['user_id'] = Auth::id();
+        $reservation['status'] = 0;
+        if ($input['payment_type'] == 'Credit Card' && $input['result_type'] == 'success') {
+            $reservation['status'] = 1;
+            $reservation['payment_type'] = "Credit Card";
+        } else if ($input['payment_type'] == 'direct' && $input['result_type'] == 'success') {
+            $reservation['status'] = 2;
+            $reservation['payment_type'] = "At Check In";
         }
 
-        // Deny
-        else if($response->transaction_status == 'deny') {
-            echo "<p>Transaksi ditolak.</p>";
-            echo "<p>Status transaksi untuk order id .$response->order_id: " .
-                "$response->transaction_status</p>";
+        unset($booking['first_name']);
+        unset($booking['last_name']);
 
-            echo "<h3>Detail transaksi:</h3>";
-            echo "<pre>";
-            var_dump($response);
-            echo "</pre>";
-        }
+//            dd($booking);
 
-        // Challenge
-        else if($response->transaction_status == 'challenge') {
-            echo "<p>Transaksi challenge.</p>";
-            echo "<p>Status transaksi untuk order id $response->order_id: " .
-                "$response->transaction_status</p>";
+        $reservation = Reservation::create($reservation);
 
-            echo "<h3>Detail transaksi:</h3>";
-            echo "<pre>";
-            var_dump($response);
-            echo "</pre>";
-        }
+        $booking['reservation_id'] = $reservation->id;
 
-        // Error
-        else {
-            echo "<p>Terjadi kesalahan pada data transaksi yang dikirim.</p>";
-            echo "<p>Status message: [$response->status_code] " .
-                "$response->status_message</p>";
+        Booking::create($booking);
 
-            echo "<pre>";
-            var_dump($response);
-            echo "</pre>";
-        }
+        return redirect('book/finish');
+    }
 
-//        try
-//        {
-//            $snap_token = $midtrans->getSnapToken($transaction_data);
-//            //return redirect($vtweb_url);
-//            echo $snap_token;
-//        }
-//        catch (Exception $e)
-//        {
-//            return $e->getMessage;
-//        }
+    public function finish()
+    {
+        $data['reservation'] = session('reservation');
+        $data['book'] = session('book');
+        $data['room'] = Room::find($data['reservation']['room_id']);
+        return view('frontend.book.finish', $data);
     }
 }

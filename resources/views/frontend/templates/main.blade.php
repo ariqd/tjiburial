@@ -59,7 +59,7 @@
             @endguest
             @auth
             <li class="nav-item {{ @request()->segments(2)[0] == 'profile' ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/profile') }}">MY PROFILE</a>
+                <a class="nav-link" href="{{ url('/profile') }}">PROFILE</a>
             </li>
                 @if(Auth::user()->type == 'admin')
                     <li class="nav-item">

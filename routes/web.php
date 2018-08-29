@@ -32,6 +32,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/book/book-now', 'Frontend\BookController@book');
     Route::post('/book/book-now', 'Frontend\BookController@booking');
     Route::get('/book/payment', 'Frontend\BookController@payment');
+    Route::get('/book/payment/getSnapToken', 'Frontend\BookController@token');
+    Route::post('/book/payment', 'Frontend\BookController@pay');
+    Route::get('/book/checkout', 'Frontend\BookController@snap');
+    Route::post('/book/checkout', 'Frontend\BookController@checkout');
+    Route::get('/book/finish', 'Frontend\BookController@finish');
+//    Route::get('/book/checkout/cc', 'Frontend\BookController@sma');
+
+    Route::resource('profile', 'Frontend\ProfileController')->only([
+        'index'
+    ]);
+    Route::get('profile/reservations', 'Frontend\ProfileController@reservations');
 });
 
 // Admin Routes

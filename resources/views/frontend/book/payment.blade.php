@@ -4,6 +4,19 @@
     Payment
 @endpush
 
+@push('css')
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/select2-bootstrap.min.css">
+@endpush
+
+@push('js')
+    <script src="{{ asset('assets') }}/plugins/select2/select2.full.min.js"></script>
+    <script src="{{ asset('assets') }}/plugins/sweetalert/sweetalert.min.js"></script>
+    <script type="text/javascript"
+            src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="SB-Mid-client-VhrdXfsNQARuMh4z"></script>
+@endpush
+
 @push('style')
     <style>
         .navbar {
@@ -71,6 +84,10 @@
             display: none !important;
             animation: fadeOut .7s ease-out;
         }
+        .required {
+            color: red;
+            font-weight: bold;
+        }
         @keyframes fadeIn{
             from{
                 opacity: 0;
@@ -93,6 +110,10 @@
 @push('script')
     <script>
         $(document).ready(function(){
+            $('.select2-single').select2({
+                "theme" : "bootstrap"
+            });
+
             $(".expand").on( "click", function() {
                 $(this).next().slideToggle(200);
                 $expand = $(this).find(">:first-child");
@@ -108,13 +129,75 @@
                 var val = $(this).val();
                 // payment = val;
 
-                if(val === 'Midtrans'){
-                    $('.formMidtrans').removeClass('hidden');
+                if(val === 'Transfer'){
+                    $('.formTransfer').removeClass('hidden');
                 }else{
-                    $('.formMidtrans').addClass('hidden');
+                    $('.formTransfer').addClass('hidden');
                 }
             });
             $('[name="payment"]').change();
+
+            $('#direct-button').click(function (e) {
+                e.preventDefault();
+                swal({
+                    title: "Are you sure?",
+                    text: "Your payment will be deducted when checking in.",
+                    icon: "info",
+                    buttons: true,
+                })
+                    .then(function(okay){
+                        if (okay) {
+                            $('#direct').submit();
+                        }
+                    });
+            });
+
+            $('#pay-button').click(function (event) {
+                event.preventDefault();
+                $(this).attr("disabled", "disabled");
+
+                $.ajax({
+
+                    url: '{{ url('book/payment/getSnapToken') }}',
+                    cache: false,
+
+                    success: function(data) {
+                        //location = data;
+
+                        console.log('token = '+data);
+
+                        // var resultType = document.getElementById('result-type');
+                        // var resultData = document.getElementById('result-data');
+
+                        function changeResult(type,data){
+                            $("#result-type").val(type);
+                            $("#result-data").val(JSON.stringify(data));
+                            //resultType.innerHTML = type;
+                            //resultData.innerHTML = JSON.stringify(data);
+                        }
+
+                        snap.pay(data, {
+
+                            onSuccess: function(result){
+                                changeResult('success', result);
+                                console.log(result.status_message);
+                                console.log(result);
+                                $("#payment-form").submit();
+                            },
+                            onPending: function(result){
+                                changeResult('pending', result);
+                                console.log(result.status_message);
+                                $("#payment-form").submit();
+                            },
+                            onError: function(result){
+                                changeResult('error', result);
+                                console.log(result.status_message);
+                                $("#payment-form").submit();
+                            }
+                        });
+                    }
+                });
+            });
         });
     </script>
 @endpush
@@ -130,32 +213,33 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col-lg-7">
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-body">
                         <h4>Payment Details</h4>
-                        <form action="{{ url('book/payment') }}" method="post">
-                            <div class="form-group">
-                                <label for="">Select payment method :</label>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="midtrans" name="payment" class="custom-control-input" value="Midtrans">
-                                    <label class="custom-control-label" for="midtrans">Midtrans</label>
+                        <h5>Choose Payment Method :</h5>
+                        <div class="border py-3">
+                            <form action="{{ url('book/payment') }}" method="post" id="payment-form">
+                                {!! csrf_field() !!}
+                                <div class="text-center">
+                                    <input type="hidden" name="result_type" id="result-type" value="">
+                                    <input type="hidden" name="result_data" id="result-data" value="">
+                                    <b>Pay using Credit Card, Bank Transfer, Virtual Account, etc.</b><br>
+                                    <small>Supported by Midtrans</small><br>
+                                    <button type="submit" class="btn btn-tjiburial mt-3" id="pay-button">Click here to pay now</button>
                                 </div>
-                                <div class="custom-control custom-radio">
-                                    <input type="radio" id="onsite" name="payment" class="custom-control-input" checked value="Onsite">
-                                    <label class="custom-control-label" for="onsite">Directly at Hotel</label>
-                                </div>
-                            </div>
-                            <div class="formMidtrans">
-                                <div class="card border">
-                                    <div class="card-body">
-                                        <h5>Pay using Midtrans</h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-tjiburial mt-3">Finish Booking</button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
+                        <div class="text-center mt-4">
+                            <h4>Or</h4>
+                        </div>
+                        <div class="text-center mt-2">
+                            <form action="{{ url('book/payment') }}" id="direct" method="post">
+                                {!! csrf_field() !!}
+                                <input type="hidden" name="payment_type" value="direct">
+                                <input type="hidden" name="result_type" value="success">
+                                <button type="submit" class="btn btn-secondary mt-3" id="direct-button">Pay when Check In</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
