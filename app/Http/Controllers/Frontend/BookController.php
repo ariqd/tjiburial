@@ -59,17 +59,17 @@ class BookController extends Controller
         unset($input['_token']);
 
         $validate = Validator::make($input, [
-            'check_in_date' => 'required',
-            'duration' => 'required',
-            'guest' => 'required',
-            'rooms' => 'required',
+            'check_in_date'=> 'required',
+            'duration'     => 'required',
+            'guest'        => 'required',
+            'rooms'        => 'required',
         ]);
 
         $validate->setAttributeNames([
-            'check_in_date' => 'Check in date',
-            'duration' => 'Duration',
-            'guest' => 'Guest',
-            'rooms' => 'Rooms',
+            'check_in_date'=> 'Check in date',
+            'duration'     => 'Duration',
+            'guest'        => 'Guest',
+            'rooms'        => 'Rooms',
         ]);
 
         if ($validate->fails()) {
@@ -99,10 +99,10 @@ class BookController extends Controller
                 $check_in_date->addDay();
                 $input['check_out'] = $check_in_date->format('Y-m-d');
             }
-            $input['total'] = $subtotal;
-            $input['pricing'] = $pricing;
-            $input['check_in'] = $input['check_in_date'];
-            $input['guest_count'] = $input['guest'];
+            $input['total']      = $subtotal;
+            $input['pricing']    = $pricing;
+            $input['check_in']   = $input['check_in_date'];
+            $input['guest_count']= $input['guest'];
             $input['room_count'] = $input['rooms'];
             unset($input['check_in_date']);
             unset($input['guest']);
@@ -140,37 +140,37 @@ class BookController extends Controller
 //        dd($reservation);
 
         $validate = Validator::make($input, [
-            'title' => 'required',
-            'first_name' => 'required',
+            'title'     => 'required',
+            'first_name'=> 'required',
             'last_name' => 'required',
-            'email' => 'required|email',
-            'country' => 'required',
-            'state' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-            'postal' => 'required',
-            'dob.day' => 'required',
+            'email'     => 'required|email',
+            'country'   => 'required',
+            'state'     => 'required',
+            'city'      => 'required',
+            'address'   => 'required',
+            'postal'    => 'required',
+            'dob.day'   => 'required',
             'dob.month' => 'required',
-            'dob.year' => 'required',
-            'phone_code' => 'required',
-            'phone_no' => 'required|numeric|digits_between:5,14',
+            'dob.year'  => 'required',
+            'phone_code'=> 'required',
+            'phone_no'  => 'required|numeric|digits_between:5,14',
         ]);
 
         $validate->setAttributeNames([
-            'title' => 'Mr. / Mrs. / Ms.',
-            'first_name' => 'First Name',
+            'title'     => 'Mr. / Mrs. / Ms.',
+            'first_name'=> 'First Name',
             'last_name' => 'Last Name',
-            'country' => 'Country',
-            'state' => 'State / Province',
-            'city' => 'City',
-            'address' => 'Address',
-            'dob.day' => 'Birth Day',
+            'country'   => 'Country',
+            'state'     => 'State / Province',
+            'city'      => 'City',
+            'address'   => 'Address',
+            'dob.day'   => 'Birth Day',
             'dob.month' => 'Birth Month',
-            'dob.year' => 'Birth Year',
-            'phone_code' => 'Phone Code Number',
-            'phone_no' => 'Phone Number',
-            'email' => 'Email',
-            'postal' => 'Postal Code',
+            'dob.year'  => 'Birth Year',
+            'phone_code'=> 'Phone Code Number',
+            'phone_no'  => 'Phone Number',
+            'email'     => 'Email',
+            'postal'    => 'Postal Code',
         ]);
 
         if($validate->fails()){// if validation fail
@@ -257,9 +257,9 @@ class BookController extends Controller
         ];
 
         $custom_expiry = [
-            'start_time' => date("Y-m-d H:i:s O", time()),
-            'unit' => 'day',
-            'duration' => 2
+            'start_time'=> date("Y-m-d H:i:s O", time()),
+            'unit'      => 'day',
+            'duration'  => 2
         ];
 
         $item_details = [
@@ -276,10 +276,10 @@ class BookController extends Controller
         ];
 
         $transaction_data = [
-            'transaction_details' => $transaction_details,
-            'item_details' => $item_details,
-            'customer_details' => $customer_details,
-            'expiry' => $custom_expiry,
+            'transaction_details'=> $transaction_details,
+            'item_details'       => $item_details,
+            'customer_details'   => $customer_details,
+            'expiry'             => $custom_expiry,
 //                'credit_card' => $credit_card_option,
         ];
 

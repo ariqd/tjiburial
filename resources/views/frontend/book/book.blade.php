@@ -129,7 +129,9 @@ function isWeekend($date) {
         </div>
         <div class="row mt-4">
             <div class="col-lg-8">
-                <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$featured->name.'/'.$featured->photos()->where('main', 1)->first()->image }}">
+                @if(@$featured->photos()->where('main', 1)->first()->image)
+                    <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$featured->name.'/'.$featured->photos()->where('main', 1)->first()->image }}">
+                @endif
             </div>
             <div class="col-lg-4">
                 <h2>{{ @$featured->name }}</h2>
@@ -225,7 +227,13 @@ function isWeekend($date) {
                                     <div class="expand">
                                         <div class="row">
                                             <div class="col-lg-3">
-                                                <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+                                                @if(!empty($room->photos()->where('main', 1)->first()->image))
+                                                    <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+                                                @else
+                                                    <div class="border p-5">
+                                                        <h4 class="text-center">Coming Soon</h4>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="col-lg-6">
                                                 <h3>{{ $room->name }}</h3>
@@ -263,7 +271,13 @@ function isWeekend($date) {
                                     <div class="detail mt-3">
                                         <div class="row">
                                             <div class="col-lg-6">
-                                                <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+                                                @if(!empty($room->photos()->where('main', 1)->first()->image))
+                                                    <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+                                                @else
+                                                    <div class="border p-5">
+                                                        <h4 class="text-center">Coming Soon</h4>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="col-lg-6">
                                                 <h4 class="text-bold">Room Overview</h4>

@@ -208,7 +208,13 @@
 
 @section('content')
     <div class="base">
-        <img class="img-fluid" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+        @if(!empty($room->photos()->where('main', 1)->first()->image))
+            <img class="img-fluid" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+        @else
+            <div class="border p-5" style="margin-top: 100px;">
+                <h4 class="text-center">Coming Soon</h4>
+            </div>
+        @endif
     </div>
     <div class="container mt-3">
         <div class="row">
