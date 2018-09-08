@@ -48,6 +48,11 @@
             border: 0;
         }
 
+        .modal-body {
+            overflow: auto;
+            height: 400px;
+        }
+
         input, textarea {
             border: 0;
         }
@@ -125,18 +130,6 @@
                 }
             });
 
-            $('[name="payment"]').on('change', function(){
-                var val = $(this).val();
-                // payment = val;
-
-                if(val === 'Transfer'){
-                    $('.formTransfer').removeClass('hidden');
-                }else{
-                    $('.formTransfer').addClass('hidden');
-                }
-            });
-            $('[name="payment"]').change();
-
             $('#direct-button').click(function (e) {
                 e.preventDefault();
                 swal({
@@ -147,56 +140,71 @@
                 })
                     .then(function(okay){
                         if (okay) {
-                            $('#direct').submit();
+                            $('#myModal').modal('show');
+                            $('#myModal').on('hidden.bs.modal', function (e) {
+                                $('#okay').on('click', function () {
+                                    $('#direct').submit();
+                                });
+                            })
                         }
                     });
             });
 
             $('#pay-button').click(function (event) {
                 event.preventDefault();
-                $(this).attr("disabled", "disabled");
 
-                $.ajax({
+                $('#myModal').modal('show');
+                $('#okay').on('click', function () {
+                    $('#myModal').modal('hide');
+                    $('#pay-button').html("Please Wait...");
+                    $('#pay-button').attr("disabled", "disabled");
+                    $('#myModal').on('hidden.bs.modal', function (e) {
+                        $.ajax({
 
-                    url: '{{ url('book/payment/getSnapToken') }}',
-                    cache: false,
+                            url: '{{ url('book/payment/getSnapToken') }}',
+                            cache: false,
 
-                    success: function(data) {
-                        //location = data;
+                            success: function(data) {
+                                //location = data;
 
-                        console.log('token = '+data);
+                                console.log('token = '+data);
 
-                        // var resultType = document.getElementById('result-type');
-                        // var resultData = document.getElementById('result-data');
+                                // var resultType = document.getElementById('result-type');
+                                // var resultData = document.getElementById('result-data');
 
-                        function changeResult(type,data){
-                            $("#result-type").val(type);
-                            $("#result-data").val(JSON.stringify(data));
-                            //resultType.innerHTML = type;
-                            //resultData.innerHTML = JSON.stringify(data);
-                        }
+                                function changeResult(type,data){
+                                    $("#result-type").val(type);
+                                    $("#result-data").val(JSON.stringify(data));
+                                    //resultType.innerHTML = type;
+                                    //resultData.innerHTML = JSON.stringify(data);
+                                }
 
-                        snap.pay(data, {
+                                snap.pay(data, {
 
-                            onSuccess: function(result){
-                                changeResult('success', result);
-                                console.log(result.status_message);
-                                console.log(result);
-                                $("#payment-form").submit();
-                            },
-                            onPending: function(result){
-                                changeResult('pending', result);
-                                console.log(result.status_message);
-                                $("#payment-form").submit();
-                            },
-                            onError: function(result){
-                                changeResult('error', result);
-                                console.log(result.status_message);
-                                $("#payment-form").submit();
+                                    onSuccess: function(result){
+                                        changeResult('success', result);
+                                        console.log(result.status_message);
+                                        console.log(result);
+                                        $("#payment-form").submit();
+                                    },
+                                    onPending: function(result){
+                                        changeResult('pending', result);
+                                        console.log(result.status_message);
+                                        $("#payment-form").submit();
+                                    },
+                                    onError: function(result){
+                                        changeResult('error', result);
+                                        console.log(result.status_message);
+                                        $("#payment-form").submit();
+                                    }
+                                });
                             }
                         });
-                    }
+
+                    });
+
                 });
+
             });
         });
     </script>
@@ -376,6 +384,27 @@
         </div>
 
     </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Terms & Conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {!! $terms->body !!}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="okay">I Agree</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @include('frontend.templates.footer')
 
 @endsection

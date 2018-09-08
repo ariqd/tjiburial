@@ -62,5 +62,8 @@ Route::group(['middleware' => ['auth', 'is_admin']], function() {
         Route::resource('blog', 'Backend\BlogController');
         Route::get('blog/{id}/images', 'Backend\BlogController@images');
         Route::post('blog/images', 'Backend\BlogController@imagesUpload');
+
+        Route::get('/settings', 'Backend\SettingsController@index');
+        Route::put('/settings/save', 'Backend\SettingsController@save');
     });
 });

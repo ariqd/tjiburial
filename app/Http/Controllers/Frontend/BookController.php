@@ -7,6 +7,7 @@ use App\Http\Controllers\SnapController;
 use App\Http\Controllers\TransactionController;
 use App\Reservation;
 use App\Room;
+use App\Setting;
 use App\Veritrans\Midtrans;
 use App\Veritrans\Veritrans;
 use Carbon\Carbon;
@@ -200,6 +201,7 @@ class BookController extends Controller
         $data['reservation'] = session('reservation');
         $data['booking'] = session('booking');
         $data['room'] = Room::find($data['reservation']['room_id']);
+        $data['terms'] = Setting::where('name', 'terms')->first();
         $data['payments'] = [
             'credit_card' => [
                 'name' => 'Credit Card',
@@ -221,7 +223,6 @@ class BookController extends Controller
                 ]
             ]
         ];
-//        dd($data);
         return view('frontend.book.payment', $data);
     }
 
