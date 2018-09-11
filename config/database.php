@@ -54,6 +54,21 @@ return [
             'engine' => null,
         ],
 
+//        'mysql' => [
+//            'driver' => 'mysql',
+//            'host' => 'pondokantjiburial.com',
+//            'port' => env('DB_PORT', '3306'),
+//            'database' => 'pondokan_tjiburial',
+//            'username' => 'pondokan_cendanait',
+//            'password' => 'cendanait123',
+//            'unix_socket' => env('DB_SOCKET', ''),
+//            'charset' => 'utf8mb4',
+//            'collation' => 'utf8mb4_unicode_ci',
+//            'prefix' => '',
+//            'strict' => true,
+//            'engine' => null,
+//        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),

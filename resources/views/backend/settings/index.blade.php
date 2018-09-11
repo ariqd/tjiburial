@@ -55,6 +55,24 @@
                 });
             }
             initSummernote($('#tc'));
+
+            $('.btnDelete').on('click', function(e){
+                e.preventDefault();
+                var parent = $(this).parent();
+
+                swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this data!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then(function(willDelete){
+                        if (willDelete) {
+                            parent.find('.formDelete').submit();
+                        }
+                    });
+            });
         })
     </script>
 @endpush
@@ -76,15 +94,67 @@
                 <div class="card">
                     <div class="card-body">
                         @include('backend.templates.feedback')
-                        <div id="terms">
+                        <div id="terms" class="pb-4">
                             <h4>Terms & Conditions</h4>
                             <form action="{{ url('admin/settings/save') }}" method="post">
                                 {!! csrf_field() !!}
                                 {!! method_field('PUT') !!}
                                 {{--<input type="hidden" name="update[terms][type]" value="terms">--}}
                                 <textarea name="terms" class="form-control" id="tc" style="resize:none">{{ @old('terms') ? old('terms') : (@$terms->body ? $terms->body : '') }}</textarea>
-                                <button type="submit" class="btn btn-primary float-right mt-2">Save</button>
+                                <button type="submit" class="btn btn-success btn-raised float-right mt-2">Save</button>
                             </form>
+                        </div> {{-- Terms --}}
+
+                        <hr class="dashed">
+
+                        <div id="faq">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="d-flex justify-content-between">
+                                        <h4>FAQs</h4>
+                                        <a href="{{ url('admin/settings/faq') }}" class="btn btn-raised btn-primary btn-sm mb-3">Add New FAQ</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+
+                            </div>
+                            <table class="table card-table table-vcenter table-bordered data-table">
+                                <thead>
+                                <tr>
+                                    {{--<th>No</th>--}}
+                                    <th>Order</th>
+                                    <th>Question</th>
+                                    <th>Answer</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @forelse($faqs as $faq)
+                                    <tr>
+                                        <td>{{ $faq->order }}</td>
+                                        <td>{{ $faq->question }}</td>
+                                        <td>{{ $faq->answer }}</td>
+                                        <td>
+                                            <a href="{{ url('admin/settings/faq/'.$faq->id.'/edit') }}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a class="btn btn-danger btn-sm btnDelete" href="#">Delete</a>
+                                            <form action="{{ url('admin/settings/faq/'.$faq->id) }}" method="post" class="formDelete" style="display: none;">
+                                                {!! csrf_field() !!}
+                                                {!! method_field('delete') !!}
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="text-center">
+                                                <p>No Data</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

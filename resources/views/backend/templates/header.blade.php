@@ -27,8 +27,8 @@
                         <a href="{{ url('admin/settings') }}"
                            class="nav-link {{ (Request::is('admin/settings*')) ? 'active' : '' }}">Settings</a>
                     </li>
-                    <li class="nav-item pull-right">
-                        <a href="{{ url('/') }}" class="nav-link"><i class="fe fe-home"></i> Go To {{ url('/') }}</a>
+                    <li class="nav-item float-right">
+                        <a href="{{ url('/') }}" class="nav-link"><i class="fe fe-home"></i> Go To Front Page</a>
                     </li>
                 </ul>
             </div>

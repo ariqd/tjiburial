@@ -65,5 +65,12 @@ Route::group(['middleware' => ['auth', 'is_admin']], function() {
 
         Route::get('/settings', 'Backend\SettingsController@index');
         Route::put('/settings/save', 'Backend\SettingsController@save');
+
+        Route::get('/settings/faq', 'Backend\SettingsController@createFaq');
+        Route::post('/settings/faq', 'Backend\SettingsController@insertFaq');
+        Route::get('/settings/faq/{id}/edit', 'Backend\SettingsController@editFaq');
+        Route::put('/settings/faq/{id}', 'Backend\SettingsController@updateFaq');
+        Route::delete('/settings/faq/{id}', 'Backend\SettingsController@deleteFaq');
+
     });
 });
