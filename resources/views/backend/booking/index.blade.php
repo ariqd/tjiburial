@@ -64,7 +64,7 @@
 @endpush
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
@@ -89,22 +89,38 @@
                                             <tr>
                                                 <th class="sorting_disabled"></th>
                                                 <th>Booking Date</th>
+                                                {{--<th>Reserved By</th>--}}
                                                 <th>Name</th>
                                                 <th>Room</th>
-                                                <th>Check In Date</th>
+                                                {{--<th>Check In Date</th>--}}
+                                                {{--<th>Duration</th>--}}
+                                                {{--<th>Check Out Date</th>--}}
                                                 <th>Payment Type</th>
                                                 <th class="width50">Status</th>
-                                                <th class="width50">Actions</th>
+                                                <th class="width50"></th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             @foreach($bookings as $booking)
                                                 <tr>
                                                     <td class="sorting_disabled"></td>
-                                                    <td>{{ $booking->created_at->format('Y-m-d') }}</td>
+                                                    <td>{{ date('d M Y', strtotime($booking->created_at)) }} ({{ $booking->created_at->diffForHumans() }})</td>
+{{--                                                    <td>{{ $booking->reservation->user->name }}</td>--}}
                                                     <td>{{ $booking->title .' ' . $booking->name }}</td>
-                                                    <td>{{ $booking->reservation->room->name }}</td>
-                                                    <td>{{ $booking->reservation->check_in }}</td>
+                                                    <td>
+                                                        <a href="{{ url('admin/rooms/'.$booking->reservation->room->id) }}">
+                                                            {{ $booking->reservation->room->name }}
+                                                        </a>
+                                                    </td>
+                                                    {{--<td>--}}
+                                                        {{--{{ date('d M Y', strtotime($booking->reservation->check_in)) }} ({{ Carbon\Carbon::parse($booking->reservation->check_in)->diffForHumans() }})--}}
+                                                    {{--</td>--}}
+                                                    {{--<td>--}}
+                                                        {{--{{ $booking->reservation->duration }} night(s)--}}
+                                                    {{--</td>--}}
+                                                    {{--<td>--}}
+                                                        {{--{{ date('d M Y', strtotime($booking->reservation->check_out)) }} ({{ Carbon\Carbon::parse($booking->reservation->check_out)->diffForHumans() }})--}}
+                                                    {{--</td>--}}
                                                     <td>{{ $booking->reservation->payment_type }}</td>
                                                     <td class="width50">
                                                         @switch($booking->reservation->status)
@@ -115,10 +131,14 @@
                                                             @case(1)
                                                             <span class="badge badge-success">Paid</span>
                                                             @break
+
+                                                            @default
+                                                            <span class="badge badge-primary">Paid at Check in</span>
+
                                                         @endswitch
                                                     </td>
                                                     <td class="width50">
-                                                        <a href="#"><i class="fa fa-eye"></i></a>
+                                                        <a href="{{ url('admin/bookings/'.$booking->id) }}" class="btn btn-icon btn-primary"><i class="fa fa-eye"></i></a>
                                                     </td>
                                                 </tr>
                                             @endforeach

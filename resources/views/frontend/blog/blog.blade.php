@@ -60,54 +60,28 @@
         </div>
         <div class="row">
             <div class="card-columns">
-                <a href="{{ url('blog/1') }}" class="card text-dark">
-                    <img class="card-img-top" src="{{ asset('uploads') }}/blog/1.jpg" alt="Blog image">
-                    <div class="card-body">
-                        <h5 class="card-title">Blog title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci aliquam blanditiis dignissimos eius eum facere fuga laboriosam officia officiis, quae quia rerum, suscipit. Est et, ex id porro quaerat velit?</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </a>
-                <a href="{{ url('blog/1') }}" class="card text-dark">
-                    <img class="card-img-top" src="{{ asset('uploads') }}/blog/5.png" alt="Blog image">
-                    <div class="card-body">
-                        <h5 class="card-title">Blog title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci aliquam blanditiis dignissimos eius eum facere fuga laboriosam officia officiis, quae quia rerum, suscipit. Est et, ex id porro quaerat velit?</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </a>
-                <a href="{{ url('blog/1') }}" class="card text-dark">
-                    <img class="card-img-top" src="{{ asset('uploads') }}/blog/promo-2.png" alt="Blog image">
-                    <div class="card-body">
-                        <h5 class="card-title">Blog title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci aliquam blanditiis dignissimos eius eum facere fuga laboriosam officia officiis, quae quia rerum, suscipit. Est et, ex id porro quaerat velit?</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </a>
-                <a href="{{ url('blog/1') }}" class="card text-dark">
-                    <img class="card-img" src="{{ asset('uploads') }}/blog/3.jpg" alt="Blog image">
-                    <div class="card-body">
-                        <h5 class="card-title">Blog title</h5>
-                        <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci aliquam blanditiis dignissimos eius eum facere fuga laboriosam officia officiis, quae quia rerum, suscipit. Est et, ex id porro quaerat velit?</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </a>
-                <a href="{{ url('blog/1') }}" class="card text-dark">
-                    <img class="card-img" src="{{ asset('uploads') }}/blog/blog1.png" alt="Blog image">
-                    <div class="card-body">
-                        <h5 class="card-title">Blog title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </a>
-                <a href="{{ url('blog/1') }}" class="card text-dark">
-                    <img class="card-img" src="{{ asset('uploads') }}/blog/promo-3.png" alt="Blog image">
-                    <div class="card-body">
-                        <h5 class="card-title">Blog title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                </a>
+                @foreach($blogs as $blog)
+                    @php
+                    $pictures = [];
+                    if (!empty($blog->pictures))
+                        $pictures = json_decode($blog->pictures);
+                    @endphp
+{{--                    @foreach($pictures as $picture)--}}
+                    {{--@endforeach--}}
+                    <a href="{{ url('blog/'.$blog->id) }}" class="card text-dark">
+                        @forelse($pictures as $picture)
+                            <img class="card-img-top" src="{!! asset('uploads') . '/blog/'.$blog->title.'/'.@$picture->image !!}" alt="Blog image">
+                            @break
+                        @empty
+                            <p class="text-center my-3">*No Image*</p>
+                        @endforelse
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $blog->title }}</h5>
+                            <p class="card-text">{!! mb_strimwidth($blog->description, 0, 200, "...") !!}</p>
+                            <p class="card-text"><small class="text-muted">Last updated {{ $blog->updated_at->diffForHumans() }}</small></p>
+                        </div>
+                    </a>
+                @endforeach
             </div>
         </div>
     </div>

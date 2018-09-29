@@ -14,4 +14,10 @@ class BookingController extends Controller
         $data['bookings'] = Booking::orderBy('created_at', 'desc')->get();
         return view('backend.booking.index', $data);
     }
+
+    public function show($id)
+    {
+        $data['booking'] = Booking::find($id);
+        return view('backend.booking.detail', $data);
+    }
 }

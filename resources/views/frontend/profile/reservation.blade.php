@@ -1,5 +1,5 @@
 @extends('frontend.profile.index')
-dfxfvsddv
+
 @section("profile")
     <h2>My Reservations</h2>
     <div class="table-reservation">
@@ -33,7 +33,7 @@ dfxfvsddv
                         @endswitch
                     </td>
                     <td>
-                        <a href="#" class="text-secondary"><i class="fa fa-eye"></i></a>
+                        <a href="{{ url('profile/reservation/'.$reservation->id) }}" class="text-secondary"><i class="fa fa-eye"></i></a>
                     </td>
                 </tr>
             @endforeach

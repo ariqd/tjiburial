@@ -39,10 +39,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/book/finish', 'Frontend\BookController@finish');
 //    Route::get('/book/checkout/cc', 'Frontend\BookController@sma');
 
-    Route::resource('profile', 'Frontend\ProfileController')->only([
-        'index'
-    ]);
-    Route::get('profile/reservations', 'Frontend\ProfileController@reservations');
+    Route::get('/profile', 'Frontend\ProfileController@index');
+    Route::get('/profile/reservations', 'Frontend\ProfileController@reservations');
+    Route::get('/profile/reservations/{id}', 'Frontend\ProfileController@showReservation');
 });
 
 // Admin Routes

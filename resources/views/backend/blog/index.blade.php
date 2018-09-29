@@ -100,7 +100,7 @@
                                     <tr>
                                         <th class="sorting_disabled">No.</th>
                                         <th>Title</th>
-                                        <th>Status</th>
+                                        {{--<th>Status</th>--}}
                                         <th>Actions</th>
                                     </tr>
                                     </thead>
@@ -110,15 +110,8 @@
                                             <td class="sorting_disabled">{{ $key + 1 }}</td>
                                             <td><a href="{{ url('admin/blog/'.$blog->id.'/edit') }}">{{ $blog->title }}</a></td>
                                             <td class="width50">
-                                                @if(@$blog->status == 1)
-                                                    <div class="label label-success"><i class="fe fe-check"></i> Available</div>
-                                                @else
-                                                    <div class="label label-danger"><i class="fe fe-x"></i> Unavailable</div>
-                                                @endif
-                                            </td>
-                                            <td class="width50">
                                                 <a class="icon" href="{{ url('admin/blog/'.$blog->id.'/images') }}">
-                                                    <i class="fe fe-image"></i> {{ $blog->images()->count() }}
+                                                    <i class="fe fe-image"></i>
                                                 </a>
                                                 <a class="icon ml-3" href="{{ url('admin/blog/'.$blog->id.'/edit') }}">
                                                     <i class="fe fe-edit"></i>

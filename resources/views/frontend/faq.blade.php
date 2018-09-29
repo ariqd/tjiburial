@@ -150,68 +150,71 @@
             <div class="col-lg-12">
                 <div id="integration-list">
                     <ul>
-                        <li>
-                            <a class="expand">
-                                <div class="right-arrow">+</div>
-                                <div>
-                                    <h2>Question that has been asked periodically?</h2>
+                        @foreach ($faqs as $faq)
+                            <li>
+                                <a class="expand">
+                                    <div class="right-arrow">+</div>
+                                    <div>
+                                        <h2>{{ $faq->question }}</h2>
+                                    </div>
+                                </a>
+
+                                <div class="detail">
+                                    <p>
+                                        {!! $faq->answer !!}
+                                    </p>
                                 </div>
-                            </a>
+                            </li>
+                        @endforeach
 
-                            <div class="detail">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium aliquam deleniti et eveniet exercitationem, facere facilis fugit impedit laudantium maiores molestiae nemo quibusdam rerum similique temporibus ut vero vitae voluptatem!
-                                </p>
-                            </div>
-                        </li>
 
-                        <li>
-                            <a class="expand">
-                                <div class="right-arrow">+</div>
-                                <h2>Question that has been asked periodically?</h2>
-                            </a>
-                            <div class="detail">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.
-                                </p>
-                            </div>
-                        </li>
+                        {{--<li>--}}
+                            {{--<a class="expand">--}}
+                                {{--<div class="right-arrow">+</div>--}}
+                                {{--<h2>Question that has been asked periodically?</h2>--}}
+                            {{--</a>--}}
+                            {{--<div class="detail">--}}
+                                {{--<p>--}}
+                                    {{--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.--}}
+                                {{--</p>--}}
+                            {{--</div>--}}
+                        {{--</li>--}}
 
-                        <li>
-                            <a class="expand">
-                                <div class="right-arrow">+</div>
-                                <h2>Question that has been asked periodically?</h2>
-                            </a>
-                            <div class="detail">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.
-                                </p>
-                            </div>
-                        </li>
+                        {{--<li>--}}
+                            {{--<a class="expand">--}}
+                                {{--<div class="right-arrow">+</div>--}}
+                                {{--<h2>Question that has been asked periodically?</h2>--}}
+                            {{--</a>--}}
+                            {{--<div class="detail">--}}
+                                {{--<p>--}}
+                                    {{--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.--}}
+                                {{--</p>--}}
+                            {{--</div>--}}
+                        {{--</li>--}}
 
-                        <li>
-                            <a class="expand">
-                                <div class="right-arrow">+</div>
-                                <h2>Question that has been asked periodically?</h2>
-                            </a>
-                            <div class="detail">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.
-                                </p>
-                            </div>
-                        </li>
+                        {{--<li>--}}
+                            {{--<a class="expand">--}}
+                                {{--<div class="right-arrow">+</div>--}}
+                                {{--<h2>Question that has been asked periodically?</h2>--}}
+                            {{--</a>--}}
+                            {{--<div class="detail">--}}
+                                {{--<p>--}}
+                                    {{--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.--}}
+                                {{--</p>--}}
+                            {{--</div>--}}
+                        {{--</li>--}}
 
-                        <li>
-                            <a class="expand">
-                                <div class="right-arrow">+</div>
-                                <h2>Question that has been asked periodically?</h2>
-                            </a>
-                            <div class="detail">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.
-                                </p>
-                            </div>
-                        </li>
+                        {{--<li>--}}
+                            {{--<a class="expand">--}}
+                                {{--<div class="right-arrow">+</div>--}}
+                                {{--<h2>Question that has been asked periodically?</h2>--}}
+                            {{--</a>--}}
+                            {{--<div class="detail">--}}
+                                {{--<p>--}}
+                                    {{--Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis ea eius facere hic impedit inventore molestiae quisquam quod sit tenetur? Doloremque ducimus molestiae quasi saepe ut! Commodi eveniet ipsa quasi.--}}
+                                {{--</p>--}}
+                            {{--</div>--}}
+                        {{--</li>--}}
                     </ul>
                 </div>
             </div>

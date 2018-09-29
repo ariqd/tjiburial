@@ -71,7 +71,7 @@
                 $('.btnDeleteImage').on('click', function(){
                     var id = $(this).data('id');
                     console.log(id);
-                    $(this).parents('.promotionImages').remove();
+                    $(this).parents('.blogImages').remove();
                     $(".deleteImage"+id).prop('disabled', false);
                 });
             }
@@ -82,17 +82,17 @@
             $('.btnAddImage').on('click', function(e){
                 e.preventDefault();
 
-                if($('form .promotionImages').length === 5){
+                if($('form .blogImages').length === 5){
                     swal('Caution!', 'You already reach the image limit.', 'warning');
                     return false;
                 }
 
                 $('#additional-image').append($('#template')[0].innerHTML);
 
-                $('.promotionImages').each(function(key, val){
+                $('.blogImages').each(function(key, val){
                     $(val).find('input:file').each(function(keyInput, valInput){
                         console.log(valInput);
-                        $(valInput)[0].setAttribute('name', 'promotionImages['+key+']'+$(valInput).data('name'));
+                        $(valInput)[0].setAttribute('name', 'blogImages['+key+']'+$(valInput).data('name'));
                     });
                 });
 
@@ -116,7 +116,7 @@
                                 <h1>Images of {{ $blog->title }}</h1>
                             </div>
                             <div class="col-lg-6">
-                                <a href="{{ url('admin/promotions') }}" class="btn btn-primary float-right">
+                                <a href="{{ url('admin/blog') }}" class="btn btn-primary float-right">
                                     <i class="fa fa-home"></i>&nbsp;&nbsp;Rooms
                                 </a>
                             </div>
@@ -124,19 +124,19 @@
                         @include('backend.templates.feedback')
                         <div class="row mt-2">
                             <div class="col-lg-12">
-                                <form action="{{ url('admin/promotions/images') }}" method="post" enctype="multipart/form-data">
+                                <form action="{{ url('admin/blog/images') }}" method="post" enctype="multipart/form-data">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="promotion_id" value="{{ $blog->id }}">
-
-                                    @foreach($blogImages as $key => $blogImage)
-                                        <div class="promotionImages" id="promotionImages{{ $key }}">
+                                    <input type="hidden" name="blog_id" value="{{ $blog->id }}">
+                                    @if(!empty($pictures))
+                                    @foreach($pictures as $key => $blogImage)
+                                        <div class="blogImages" id="blogImages{{ $key }}">
                                             <div class="form-group">
                                                 <h3>
                                                     {{ ($key == 0) ? 'Main' : 'Additional' }} Image
-                                                    @if($key > 0)
-                                                        <button class="btn btn-danger btnDeleteImage pull-right" type="button" data-id="{{ $blogImage->id }}">
+{{--                                                    @if($key > 0)--}}
+                                                        <button class="btn btn-danger btnDeleteImage pull-right" type="button" data-id="{{ $key }}">
                                                             <i class="fa fa-times"></i> Remove Image</button>
-                                                    @endif
+                                                    {{--@endif--}}
                                                 </h3>
 
                                                 {{--<label class="bmd-label-floating strong-label">Main Image</label>--}}
@@ -144,8 +144,8 @@
                                                 <div class="setting image_picker">
                                                     <div class="settings_wrap">
                                                         <label class="drop_target {{ (@$blogImage->image && @$blogImage->image != '') ? 'dropped' : '' }}">
-                                                            <div class="image_preview" style="background-image: url('{{ (@$blogImage->image && @$blogImage->image != '') ? asset('uploads') . '/promotions/'.$blog->title.'/'.@$blogImage->image : '' }}')"></div>
-                                                            <input class="inputFile" type="file" name="promotionImages[{{$key}}][image]" data-name="[image]" value="{{ @$blogImage->image }}"/>
+                                                            <div class="image_preview" style="background-image: url('{{ (@$blogImage->image && @$blogImage->image != '') ? asset('uploads') . '/blog/'.$blog->title.'/'.@$blogImage->image : '' }}')"></div>
+                                                            <input class="inputFile" type="file" name="blogImages[{{$key}}][image]" data-name="[image]" value="{{ @$blogImage->image }}"/>
                                                         </label>
                                                         <div class="settings_actions vertical"><a data-action="choose_from_uploaded"><i class="fa fa-picture-o"></i> Drop / choose image to uploads</a><a class="{{ (@$blogImage->image && @$blogImage->image != '') ? '' : 'disabled' }}" data-action="remove_current_image"><i class="fa fa-ban"></i> Remove Current Image</a></div>
                                                         <div class="image_details">
@@ -160,8 +160,9 @@
                                                 </small>
                                             </div>
                                         </div>
-                                        <input type="hidden" class="deleteImage{{ @$blogImage->id }}" name="delete[]" value="{{ @$blogImage->id }}" disabled>
+                                        <input type="hidden" class="deleteImage{{ @$key }}" name="delete[]" value="{{ @$key }}" disabled>
                                     @endforeach
+                                    @endif
 
                                     <div id="additional-image"></div>
 
@@ -177,5 +178,5 @@
         </div>
     </div>
 
-    @include('backend.promotions.imageTemplate')
+    @include('backend.blog.imageTemplate')
 @endsection

@@ -9,7 +9,7 @@ class Blog extends Model
     protected $table = 'blogs';
 
     protected $fillable = [
-        'title', 'description'
+        'title', 'description', 'pictures'
     ];
 
     public function images()

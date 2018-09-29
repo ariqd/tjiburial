@@ -76,14 +76,77 @@ class BlogController extends Controller
     public function images($id = 0)
     {
         $data['blog'] = Blog::find($id);
-        $blogImages = $data['blog']->images();
-
-        if ($blogImages->count() > 0) {
-            $data['blogImages'] = $blogImages->get();
-        } else {
-            $data['blogImages'] = [1];
-        }
+        $data['pictures'] = json_decode($data['blog']->pictures);
+//        $blogImages = $data['blog']->images();
+//
+//        if ($blogImages->count() > 0) {
+//            $data['blogImages'] = $blogImages->get();
+//        } else {
+//            $data['blogImages'] = [1];
+//        }
+//        dd($data);
 
         return view('backend.blog.images', $data);
+    }
+
+    public function imagesUpload(Request $request)
+    {
+        $input = $request->all();
+        unset($input['_token']);
+
+//        dd($input);
+
+        $blog = Blog::find($input['blog_id']);
+
+
+        if (isset($input['delete'])) {
+            $allPictures = '';
+            foreach ($input['delete'] as $value) {
+                $allPictures = json_decode($blog->pictures, true);
+                foreach ($allPictures as $id => $allPicture) {
+                    if ($id == $value)
+                        unset($allPictures[$id]);
+                }
+            }
+            $allPictures = json_encode($allPictures);
+            $blog->pictures = $allPictures;
+            $blog->save();
+        }
+
+        if (isset($request->blogImages)) {
+            $jsonInput = [];
+            foreach ($request->blogImages as $key => $pictures) {
+                $imageName = $blog->title . '-' . ($key + 1) .'--'. date('d-m-Y') . '--'. time() . '.' . $pictures['image']->getClientOriginalExtension();
+                $pictures['image']->storeAs('blog/'.$blog->title, $imageName, 'public_uploads');
+
+                $jsonInput[] = [
+                    'id' => $key + 1,
+                    'image' => $imageName,
+                ];
+            }
+
+            $nowPictures = [];
+            if (!empty($blog->pictures)) {
+                $nowPictures = json_decode($blog->pictures, true);
+            }
+
+            foreach ($jsonInput as $value) {
+                array_push($nowPictures, $value);
+            }
+            $nowPictures = json_encode($nowPictures);
+
+            $blog->pictures = $nowPictures;
+        }
+        $blog->save();
+
+        return redirect('admin/blog')->with('info', 'Image Settings Success.');
+    }
+
+    public function destroy($id)
+    {
+        $blog = Blog::find($id);
+        $blog->delete();
+
+        return redirect('admin/blog')->with('info', 'Delete Blog Success.');
     }
 }

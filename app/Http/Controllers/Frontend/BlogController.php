@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Blog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -9,12 +10,14 @@ class BlogController extends Controller
 {
     public function index()
     {
-        return view('frontend.blog.blog');
+        $data['blogs'] = Blog::all();
+        return view('frontend.blog.blog', $data);
     }
 
     public function show($id)
     {
-        return view('frontend.blog.detail');
+        $data['blog'] = Blog::find($id);
+        return view('frontend.blog.detail', $data);
     }
 
     public function book($id)
