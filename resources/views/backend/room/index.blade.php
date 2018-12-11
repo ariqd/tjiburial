@@ -118,34 +118,24 @@
                                 <div class="row mt-3">
                                     <div class="col-lg-12">
                                         <div class="table-responsive">
-                                            <table class="table card-table table-vcenter table-bordered data-table">
+                                            <table class="table card-table table-vcenter data-table">
                                                 <thead>
                                                 <tr>
-                                                    <th>Room Name</th>
+                                                    <th>Title</th>
                                                     <th>Room Type</th>
-                                                    {{--<th>Url / Slug</th>--}}
-                                                    <th>Price Weekday</th>
-                                                    <th>Price Weekend</th>
-                                                    {{--<th>Capacity</th>--}}
-                                                    {{--<th>Installment</th>--}}
                                                     <th></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 @foreach($rooms as $room)
                                                     <tr>
-                                                        <td>{{ $room->name }}</td>
-                                                        <td>{{ $room->type }}</td>
-                                                        {{--<td>/{{ $room->slug }}</td>--}}
-                                                        <td>Rp {{ number_format($room->price, 0, ',', '.') }}</td>
-                                                        <td>Rp {{ number_format($room->price_weekend, 0, ',', '.') }}</td>
-                                                        {{--<td>{{ $room->max_guest }}</td>--}}
-                                                        {{--<td>{{ $room->installment }}</td>--}}
-                                                        <td>
-                                                            <a href="{{ url('admin/rooms/'. $room->id .'/images') }}" class="btn btn-icon btn-primary"><i class="fe fe-image"></i> {{ $room->photos()->count() }}</a>
-                                                            <a href="{{ url('admin/rooms/'. $room->id) }}" class="btn btn-icon btn-success"><i class="fe fe-eye"></i></a>
-                                                            <a href="{{ url('admin/rooms/'. $room->id .'/edit') }}" class="btn btn-icon btn-warning"><i class="fe fe-edit"></i></a>
-                                                            <a href="#" class="btn btn-icon btn-danger btnDelete"><i class="fe fe-trash"></i></a>
+                                                        <td>{{ $room->title }}</td>
+                                                        <td>{{ $room->tipe_kamar }}</td>
+                                                        <td class="d-flex justify-content-end">
+                                                            <a href="{{ url('admin/rooms/'. $room->id .'/images') }}" class="btn btn-primary"><i class="fe fe-image"></i> {{ $room->images()->count() }} Images</a>
+                                                            <a href="{{ url('admin/rooms/'. $room->id) }}" class="btn btn-success"><i class="fe fe-eye"></i> View</a>
+                                                            <a href="{{ url('admin/rooms/'. $room->id .'/edit') }}" class="btn btn-warning"><i class="fe fe-edit"></i> Edit</a>
+                                                            <a href="#" class="btn btn-danger btnDelete"><i class="fe fe-trash"></i> Delete</a>
                                                             <form action="{{ url('admin/rooms/'.$room->id) }}" method="post" class="formDelete" style="display: none;">
                                                             {!! csrf_field() !!}
                                                             {!! method_field('delete') !!}
@@ -162,8 +152,8 @@
                                                 {{--<div class="expand">--}}
                                                     {{--<div class="row">--}}
                                                         {{--<div class="col-lg-3">--}}
-                                                            {{--<img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->first()->image }}">--}}
-                                                            {{--<a href="{{ url('admin/rooms/'. $room->id .'/images') }}" class="btn btn-warning btn-block mt-3"><i class="fe fe-image"></i> All Images ({{ $room->photos()->count() }})</a>--}}
+                                                            {{--<img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->images()->first()->image }}">--}}
+                                                            {{--<a href="{{ url('admin/rooms/'. $room->id .'/images') }}" class="btn btn-warning btn-block mt-3"><i class="fe fe-image"></i> All Images ({{ $room->images()->count() }})</a>--}}
                                                         {{--</div>--}}
                                                         {{--<div class="col-lg-6">--}}
                                                             {{--<h3>{{ $room->name }}</h3>--}}
@@ -204,7 +194,7 @@
                                                 {{--<div class="detail mt-3">--}}
                                                     {{--<div class="row">--}}
                                                         {{--<div class="col-lg-6">--}}
-                                                            {{--<img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->first()->image }}">--}}
+                                                            {{--<img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->images()->first()->image }}">--}}
                                                         {{--</div>--}}
                                                         {{--<div class="col-lg-6">--}}
                                                             {{--<h4 class="text-bold">Room Overview</h4>--}}

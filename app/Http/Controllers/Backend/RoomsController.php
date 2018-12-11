@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Bedroom;
+use App\Facility;
 use App\Room;
 use App\RoomPhoto;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,6 +16,7 @@ class RoomsController extends Controller
 {
     public function index()
     {
+//        $data['rooms'] = Bedroom::all();
         $data['rooms'] = Room::all();
         return view('backend.room.index', $data);
     }
@@ -25,7 +29,8 @@ class RoomsController extends Controller
 
     public function create()
     {
-        return view('backend.room.form');
+        $d['facilities'] = Facility::orderBy('name')->get();
+        return view('backend.room.form2', $d);
     }
 
     public function store(Request $request)
@@ -33,13 +38,15 @@ class RoomsController extends Controller
         $input = $request->all();
         unset($input['_token']);
 
+        dd($input);
+
         $validate = Validator::make($input, [
             'name'          => 'required',
             'type'          => 'required',
             'price'         => 'required|numeric',
             'price_weekend' => 'required|numeric',
             'overview'      => 'required',
-            'facilities'    => 'required',
+//            'facilities'    => 'required',
             'amenities'     => 'required',
             'specials'      => 'required',
             'max_guest'     => 'required|numeric'
@@ -58,8 +65,14 @@ class RoomsController extends Controller
     {
         $data['edit'] = TRUE;
         $data['room'] = Room::find($id);
+        $data['facilities'] = Facility::orderBy('name')->get();
 
-        return view('backend.room.form', $data);
+        $allotment = DB::connection('mysql_hotelpro2')
+            ->select('select * from allotment where tanggal = '.date('Y-m-d'));
+
+        dd($allotment);
+
+        return view('backend.room.form2', $data);
     }
 
     public function update(Request $request, $id = 0)
@@ -68,6 +81,8 @@ class RoomsController extends Controller
 
         $input = $request->all();
         unset($input['_token']);
+
+        dd($input);
 
         $validate = Validator::make($input, [
             'name'          => 'required',
@@ -84,15 +99,7 @@ class RoomsController extends Controller
         if ($validate->fails()) {
             return redirect('admin/rooms/'. $id .'/edit')->with('error', 'Your data is not complete.')->withErrors($validate->errors())->withInput($input);
         } else {
-            $room->name             = $input['name'];
-            $room->type             = $input['type'];
-            $room->price            = $input['price'];
-            $room->price_weekend    = $input['price_weekend'];
-            $room->overview         = $input['overview'];
-            $room->facilities       = $input['facilities'];
-            $room->amenities        = $input['amenities'];
-            $room->specials         = $input['specials'];
-            $room->max_guest        = $input['max_guest'];
+            $room->update($input);
 
             if (!empty($input['installment'])) {
                 $room->installment = $input['installment'];
@@ -104,7 +111,7 @@ class RoomsController extends Controller
 
             $room->save();
 
-            return redirect('admin/rooms')->with('info', 'Upload images for '. $room->name);
+            return redirect('admin/rooms')->with('info', 'Edit success for '. $room->name);
         }
     }
 

@@ -95,11 +95,7 @@
                 </div>
             </div>
         </div>
-        @if(Request::is('event/register/*'))
-            @include('backend.templates.headerRegister')
-        @else
-            @include('backend.templates.header')
-        @endif
+        @include('backend.templates.header')
         {{--end header section--}}
 
         {{--content section--}}

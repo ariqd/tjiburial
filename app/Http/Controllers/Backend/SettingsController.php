@@ -24,22 +24,15 @@ class SettingsController extends Controller
         unset($input['files']);
 
         $settings = Setting::all();
-        $update = '';
 
-        if ($input['terms'] != '') {
-            $terms = $settings->where('name', 'terms');
-            if ($input['terms'] != $terms) {
-                $update = Setting::updateOrCreate(
-                    ['name' => 'terms', 'body' => $input['terms']]
-                );
-            }
+        if ($input['terms']) {
+            $terms = $settings->where('name', 'terms')->first();
+            $terms->body = $input['terms'];
+            $terms->save();
+            return redirect()->back()->with('info', 'Update Terms Success');
         }
 
-        if ($update) {
-            return redirect()->back()->with('info', 'Update Success');
-        } else {
-            return redirect()->back()->with('error', 'Update Failed');
-        }
+        return redirect()->back()->with('error', 'Update Failed');
     }
 
     public function createFaq()

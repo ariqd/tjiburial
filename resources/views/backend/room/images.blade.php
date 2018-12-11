@@ -1,7 +1,7 @@
 @extends('backend.templates.main')
 
 @push('title')
-    Images of {{ $room->name }}
+    Images of {{ $room->title }}
 @endpush
 
 @push('js')
@@ -83,7 +83,7 @@
             $('.btnAddImage').on('click', function(e){
                 e.preventDefault();
 
-                if($('form .roomPhotos').length === 3){
+                if($('form .roomPhotos').length === 10){
                     swal('Caution!', 'You already reach the image limit.', 'warning');
                     return false;
                 }
@@ -114,10 +114,10 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg-6">
-                            <h1>Images of {{ $room->name }}</h1>
+                        <div class="col-lg-9">
+                            <h1>Images of "{{ $room->title }}"</h1>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-3">
                             <a href="{{ url('admin/rooms') }}" class="btn btn-primary float-right">
                                 <i class="fa fa-home"></i>&nbsp;&nbsp;Rooms
                             </a>
@@ -128,13 +128,13 @@
                         <div class="col-lg-12">
                             <form action="{{ url('admin/rooms/images') }}" method="post" enctype="multipart/form-data">
                             {{ csrf_field() }}
-                                <input type="hidden" name="room_id" value="{{ $room->id }}">
+                                <input type="hidden" name="bedroom_id" value="{{ $room->id }}">
 
                                 @foreach($roomPhotos as $key => $roomPhoto)
                                     <div class="roomPhotos" id="roomPhoto{{ $key }}">
                                         <div class="form-group">
                                             <h3>
-                                                {{ ($key == 0) ? 'Main' : 'Additional' }} Image
+                                                Image {{ $key + 1 }}
                                                 @if($key > 0)
                                                     <button class="btn btn-danger btnDeleteImage pull-right" type="button" data-id="{{ $roomPhoto->id }}">
                                                         <i class="fa fa-times"></i> Remove Image
@@ -147,7 +147,7 @@
                                             <div class="setting image_picker">
                                                 <div class="settings_wrap">
                                                     <label class="drop_target {{ (@$roomPhoto->image && @$roomPhoto->image != '') ? 'dropped' : '' }}">
-                                                        <div class="image_preview" style="background-image: url('{{ (@$roomPhoto->image && @$roomPhoto->image != '') ? asset('uploads') . '/rooms/'.$room->name.'/'.@$roomPhoto->image : '' }}')"></div>
+                                                        <div class="image_preview" style="background-image: url('{{ (@$roomPhoto->image && @$roomPhoto->image != '') ? asset('uploads') . '/rooms/'.$room->id.'/'.@$roomPhoto->image : '' }}')"></div>
                                                         <input class="inputFile" type="file" name="roomPhoto[{{$key}}][image]" data-name="[image]" value="{{ @$roomPhoto->image }}"/>
                                                     </label>
                                                     <div class="settings_actions vertical"><a data-action="choose_from_uploaded"><i class="fa fa-picture-o"></i> Drop / choose image to uploads</a><a class="{{ (@$roomPhoto->image && @$roomPhoto->image != '') ? '' : 'disabled' }}" data-action="remove_current_image"><i class="fa fa-ban"></i> Remove Current Image</a></div>
@@ -164,6 +164,14 @@
                                         </div>
                                     </div>
                                     <input type="hidden" class="deleteImage{{ @$roomPhoto->id }}" name="delete[]" value="{{ @$roomPhoto->id }}" disabled>
+                                    {{--<div class="form-group">--}}
+                                        {{--<label for="order" class="bmd-label-floating">Image Order</label>--}}
+                                        {{--<select name="roomPhoto[{{$key}}][order]" id="order" class="col-lg-3 custom-select">--}}
+                                            {{--@for($i = 1; $i <= 10; $i++)--}}
+                                                {{--<option value="{{ $i }}" {{ @$roomPhoto->order == $i ? 'selected' : '' }}>{{ $i }}</option>--}}
+                                            {{--@endfor--}}
+                                        {{--</select>--}}
+                                    {{--</div>--}}
                                 @endforeach
 
                                 <div id="additional-image"></div>

@@ -19,7 +19,7 @@
 </head>
 <body>
 {{--header section--}}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index:1000">
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark" style="z-index:1000">
     <a class="navbar-brand" href="{{ url('/') }}">
         <img src="{{ asset('assets') }}/images/logo.png" alt="Logo Tjiburial" width="50">
     </a>
@@ -31,12 +31,12 @@
             <li class="nav-item {{ @request()->segments(2)[0] == '' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('/') }}">HOME <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item {{ @request()->segments(2)[0] == 'features' ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/features') }}">FEATURES</a>
-            </li>
-            <li class="nav-item {{ @request()->segments(2)[0] == 'blog' ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/blog') }}">BLOG</a>
-            </li>
+            {{--<li class="nav-item {{ @request()->segments(2)[0] == 'features' ? 'active' : '' }}">--}}
+                {{--<a class="nav-link" href="{{ url('/features') }}">FEATURES</a>--}}
+            {{--</li>--}}
+            {{--<li class="nav-item {{ @request()->segments(2)[0] == 'blog' ? 'active' : '' }}">--}}
+                {{--<a class="nav-link" href="{{ url('/blog') }}">BLOG</a>--}}
+            {{--</li>--}}
             <li class="nav-item {{ @request()->segments(2)[0] == 'book' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('/book') }}">BOOK</a>
             </li>
@@ -46,16 +46,16 @@
             <li class="nav-item {{ @request()->segments(2)[0] == 'faq' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('/faq') }}">FAQ</a>
             </li>
-            <li class="nav-item {{ @request()->segments(2)[0] == 'contact' ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/contact') }}">CONTACT US</a>
-            </li>
+            {{--<li class="nav-item {{ @request()->segments(2)[0] == 'contact' ? 'active' : '' }}">--}}
+                {{--<a class="nav-link" href="{{ url('/contact') }}">CONTACT US</a>--}}
+            {{--</li>--}}
             @guest
             <li class="nav-item {{ @request()->segments(2)[0] == 'login' ? 'active' : '' }}">
                 <a class="nav-link" href="{{ url('/login') }}">LOGIN</a>
             </li>
-            <li class="nav-item {{ @request()->segments(2)[0] == 'register' ? 'active' : '' }}">
-                <a class="nav-link" href="{{ url('/register') }}">REGISTER</a>
-            </li>
+            {{--<li class="nav-item {{ @request()->segments(2)[0] == 'register' ? 'active' : '' }}">--}}
+                {{--<a class="nav-link" href="{{ url('/register') }}">REGISTER</a>--}}
+            {{--</li>--}}
             @endguest
             @auth
             <li class="nav-item {{ @request()->segments(2)[0] == 'profile' ? 'active' : '' }}">

@@ -4,10 +4,20 @@
     Book
 @endpush
 
+@push('css')
+    {{--<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>--}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css" />
+@endpush
+
+@push('js')
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+@endpush
+
 @push('style')
     <style>
         .navbar {
-            position: absolute;
+            /*position: absolute;*/
             width: 100%;
         }
         .base {
@@ -49,18 +59,18 @@
         }
 
         /*HOTEL FORM*/
-        .hotel-form {
-            border: 1px solid #9E9E9E;
-            padding: 10px;
-            border-radius: 7px;
-            margin: 5px;
-        }
-        .hotel-form .form-control, .form-control:focus {
-            border: 0;
-            outline: 0;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-        }
+        /*.hotel-form {*/
+            /*border: 1px solid #9E9E9E;*/
+            /*padding: 10px;*/
+            /*border-radius: 7px;*/
+            /*margin: 5px;*/
+        /*}*/
+        /*.hotel-form .form-control, .form-control:focus {*/
+            /*border: 0;*/
+            /*outline: 0;*/
+            /*-webkit-box-shadow: none;*/
+            /*box-shadow: none;*/
+        /*}*/
 
         /*
         ROOM CARD STYLES
@@ -72,10 +82,14 @@
             border: 1px solid #BDBDBD;
             transition: background-color 0.5s ease;
             padding-bottom: 0;
+            color: #212121;
+            /*max-height: 200px;*/
         }
         .room:hover {
             background-color: #EEEEEE;
-            cursor: pointer;
+            /*cursor: pointer;*/
+            color: #000000;
+            text-decoration: none;
         }
         .detail {
             display: none;
@@ -83,12 +97,46 @@
         .btnSubmit {
             z-index: 1000;
         }
+        /*.carousel-control-prev, .carousel-control-next {*/
+            /*!*left: 0;*!*/
+            /*z-index: 2000;*/
+        /*}*/
+        .slick-prev:before {
+            color: #212121;
+        }
+        .slick-next:before {
+            color: #212121;
+        }
+        .slick-slider div {
+            display: none;
+        }
+
+        .slick-slider:first-child {
+             display: block;
+        }
+
+        .slick-slider.slick-initialized div {
+            display: block;
+        }
+
+        .img-col{
+            /*margin-top: -120px;*/
+            overflow: hidden;
+            width: 100%;
+            height: 120px;
+        }
+        .img-col img{
+            width: 100%;
+            height: auto;
+        }
+
     </style>
 @endpush
 
 @push('script')
     <script>
         $(document).ready(function(){
+            $('.slick').slick();
             $('.btnSubmit').on('click', function(){
                 var id = $(this).data('id');
                 console.log(id);
@@ -98,10 +146,11 @@
             });
             $(".expand").on( "click", function() {
                 $(this).next().slideToggle(200);
+                // $(this).('.slick').slick();
             });
             $(".roomIdBtn{{ @$featured->id }}").click(function() {
                 $('html, body').animate({
-                    scrollTop: $(".roomIdDiv{{ $featured->id }}").offset().top
+                    scrollTop: $(".roomIdDiv{{ @$featured->id }}").offset().top
                 }, 1000);
             });
         });
@@ -129,9 +178,39 @@ function isWeekend($date) {
         </div>
         <div class="row mt-4">
             <div class="col-lg-8">
-                @if(@$featured->photos()->where('main', 1)->first()->image)
-                    <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$featured->name.'/'.$featured->photos()->where('main', 1)->first()->image }}">
+                @if($featured->images->count() != 0)
+                    <div class="px-3">
+                        <div class="slick slick-slider">
+                            @foreach(@$featured->images as $key => $photo)
+                                <div class="slick-slide">
+                                    <img class="d-block img-fluid w-100" src="{{ asset('uploads') . '/rooms/' . $featured->id . '/' . $photo->image }}" alt="Image {{ $key + 1 }}">
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="border p-5">
+                        <h4 class="text-center">Coming Soon</h4>
+                    </div>
                 @endif
+                {{--<div id="carouselFeatured" class="carousel slide" data-ride="carousel">--}}
+                    {{--<ol class="carousel-indicators">--}}
+                        {{--@foreach(@$featured->images as $key => $photo)--}}
+                            {{--<li data-target="#carouselFeatured" data-slide-to="{{ $key }}"></li>--}}
+                        {{--@endforeach--}}
+                    {{--</ol>--}}
+                    {{--<div class="carousel-inner">--}}
+                        {{--@forelse(@$featured->images as $key => $photo)--}}
+                            {{--<div class="carousel-item active">--}}
+                                {{--<img class="d-block w-100" src="{{ asset('uploads') . '/rooms/' . $featured->name . '/' . $photo->image }}" alt="Image {{ $key + 1 }}">--}}
+                            {{--</div>--}}
+                        {{--@empty--}}
+                            {{--<div class="carousel-item active">--}}
+                                {{--<img class="d-block w-100" src="{{ asset('assets') }}/images/hotel.png" alt="No Image">--}}
+                            {{--</div>--}}
+                        {{--@endforelse--}}
+                    {{--</div>--}}
+                {{--</div>--}}
             </div>
             <div class="col-lg-4">
                 <h2>{{ @$featured->name }}</h2>
@@ -147,73 +226,16 @@ function isWeekend($date) {
                 </div>
                 <div class="price pt-5">
                     <p class="text-secondary">Starting from</p>
-                    <h2>Rp {{ number_format(@$featured->price, 0, ',', '.') }}</h2>
+                    <h2>Rp {{ number_format(@$featured->allotment()->harga, 0, ',', '.') }}</h2>
                 </div>
                 <button class="btn btn-tjiburial roomIdBtn{{ @$featured->id }}">Choose Room</button>
             </div>
         </div>
-        <form action="{{ url('/book') }}" method="post">
+        <form action="{{ url('/book') }}" method="post" id="form">
             {!! csrf_field() !!}
             <div class="row mt-5">
                 <div class="col-lg-12">
-                    <div class="row hotel-form">
-                        <div class="col-lg-3">
-                            <div class="form-row d-flex justify-content-between align-items-center border-right p-2">
-                                <div class="col-10">
-                                    <label for="check_in_date" class="hotel-form-label mb-1"><b>Check In</b></label>
-                                    <input type="date" class="form-control" name="check_in_date" id="check_in_date" min="{{ date('Y-m-d') }}">
-                                </div>
-                                <div class="col-2">
-                                    <span class="fa fa-calendar fa-2x"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="form-row d-flex justify-content-between align-items-center border-right p-2">
-                                <div class="col-10">
-                                    <label for="duration" class="hotel-form-label mb-1"><b>Duration</b></label>
-                                    <select name="duration" id="duration" class="form-control custom-select" required>
-                                        @foreach($duration as $key => $value)
-                                            <option value="{{ $key + 1 }}">{{ $value }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-2">
-                                    <img src="{{ asset('assets') }}/images/duration.png" alt="duration">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="form-row d-flex justify-content-between align-items-center border-right p-2">
-                                <div class="col-10">
-                                    <label for="guest" class="hotel-form-label mb-1"><b>Guests</b></label>
-                                    <select name="guest" id="guest" class="form-control custom-select" required>
-                                        @foreach($guest as $key => $value)
-                                            <option value="{{ $value }}">{{ $value }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-2">
-                                    <span class="fa fa-male fa-2x"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="form-row d-flex justify-content-between align-items-center p-2">
-                                <div class="col-10">
-                                    <label for="rooms" class="hotel-form-label mb-1"><b>Rooms</b></label>
-                                    <select name="rooms" id="rooms" class="form-control custom-select">
-                                        @foreach($rooms_count as $key => $value)
-                                            <option value="{{ $key + 1 }}">{{ $value }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-2">
-                                    <img src="{{ asset('assets') }}/images/rooms.png" alt="rooms">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @include("frontend.templates.booking-form")
                 </div>
             </div>
 
@@ -221,77 +243,50 @@ function isWeekend($date) {
                 @foreach($rooms as $room)
                     <div class="row mt-3">
                         <div class="col-lg-12">
-                            <div class="card room roomIdDiv{{ $room->id }}">
+                            <a class="card room roomIdDiv{{ $room->id }}" href="{{ url('book/room-detail/'.$room->id) }}">
                                 <div class="card-body">
-
-                                    <div class="expand">
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                @if(!empty($room->photos()->where('main', 1)->first()->image))
-                                                    <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
-                                                @else
-                                                    <div class="border p-5">
-                                                        <h4 class="text-center">Coming Soon</h4>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <h3>{{ $room->name }}</h3>
-                                                <p class="text-secondary">Max guests {{ $room->max_guest }} person</p>
-                                                <div class="text-secondary">
-                                                    <h5>Special Features:</h5>
-                                                    {!! $room->specials !!}
+                                    <div class="row">
+                                        <div class="col-lg-2 img-col">
+                                            @if(!empty($room->images()->where('main', 1)->first()->image))
+                                                <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->id.'/'.$room->images()->where('main', 1)->first()->image }}">
+                                            @else
+                                                <div class="border p-3">
+                                                    <h5 class="text-center">Coming Soon</h5>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-3 text-right">
-                                                @if(isWeekend(date('Y-m-d')))
-                                                    <h4>Rp {{ number_format($room->price_weekend, '0', ',', '.') }} <small> / night</small></h4>
-                                                @else
-                                                    <h4>Rp {{ number_format($room->price, '0', ',', '.') }} <small> / night</small></h4>
-                                                @endif
-                                                <p class="text-primary">Inclusive of taxes</p>
+                                            @endif
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <h4>{{ $room->title }}</h4>
+                                            {{--<p>--}}
+                                                {{--Max guests {{ $room->max_guest }} person <br>--}}
+                                                {{--@if($room->room_count - $room->reservation->count() > 0)--}}
+                                                    {{--Rooms available: {{ ($room->room_count - $room->reservation->count()) }}--}}
+                                                {{--@else--}}
+                                                    {{--<span class="text-danger">Rooms available: 0</span>--}}
+                                                {{--@endif--}}
+                                            {{--</p>--}}
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="text-right">
+                                                <h4>Rp {{ number_format($room->allotment()->harga, '0', ',', '.') }} <small> / night</small></h4>
+
                                                 @if($room->installment == 1)
-                                                    <p>Installment is available for credit cardholders</p>
+                                                    Terima cicilan untuk pemegang kartu kredit
                                                 @else
-                                                    <p>No installment available</p>
+                                                    Tidak ada cicilan
                                                 @endif
                                                 <input type="hidden" name="room_id" value="{{ $room->id }}" class="inputId{{ $room->id }}" disabled>
-                                                <button class="btn btn-tjiburial text-light btnSubmit" data-id="{{ $room->id }}">Book Now</button>
+{{--                                                @if($room->room_count - $room->reservation->count() > 0)--}}
+                                                    <button class="btn btn-tjiburial mt-2 text-light btnSubmit"
+                                                            data-id="{{ $room->id }}">Book Now</button>
+                                                {{--@else--}}
+                                                    {{--<button class="btn btn-tjiburial mt-2 text-light disabled" disabled>Book Now</button>--}}
+                                                {{--@endif--}}
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-lg-12">
-                                                <div class="text-center">
-                                                    <i class="fa fa-chevron-down"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="detail mt-3">
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                @if(!empty($room->photos()->where('main', 1)->first()->image))
-                                                    <img class="img-fluid w-100" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
-                                                @else
-                                                    <div class="border p-5">
-                                                        <h4 class="text-center">Coming Soon</h4>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <h4 class="text-bold">Room Overview</h4>
-                                                {!! $room->overview !!}
-                                                <h4 class="text-bold">Basic Facilities</h4>
-                                                {!! $room->facilities !!}
-                                                <h4 class="text-bold">Amenities</h4>
-                                                {!! $room->amenities !!}
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    </div>]
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 @endforeach

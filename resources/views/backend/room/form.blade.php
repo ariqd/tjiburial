@@ -134,6 +134,18 @@
                                                value="{{ @old('price_weekend') ? old('price_weekend') : (@$room->price_weekend ? $room->price_weekend : '') }}">
                                     </div>
 
+                                    <div class="form-group">
+                                        <label for="room_count" class="bmd-label-floating">No. of Rooms</label>
+                                        <input type="number" name="room_count" class="form-control" id="room_count"
+                                               value="{{ @old('room_count') ? old('room_count') : (@$room->room_count ? $room->room_count : '') }}">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="max_guest" class="bmd-label-floating">Max no. of Guest <span class="required">*</span></label>
+                                        <input type="number" class="form-control" id="max_guest" name="max_guest"
+                                               value="{{ @old('max_guest') ? old('max_guest') : (@$room->max_guest ? $room->max_guest : '') }}">
+                                    </div>
+
                                     <div class="form-group overview">
                                         <label for="overview" class="bmd-label-floating strong-label">Room Overview <span class="required">*</span></label>
                                         <textarea name="overview" id="overview" class="summernote">{{ @old('overview') ? old('overview') : (@$room->overview ? $room->overview : '') }}</textarea>
@@ -141,6 +153,17 @@
 
                                     <div class="form-group facilities">
                                         <label for="facilities" class="bmd-label-floating strong-label">Facilities <span class="required">*</span></label>
+                                        {{--<div class="row">--}}
+                                            {{--@foreach($facilities as $facility)--}}
+                                                {{--<div class="col-lg-4 my-2">--}}
+                                                    {{--<label class="custom-control custom-checkbox">--}}
+                                                        {{--<input type="checkbox" class="custom-control-input" name="facility[{{ $facility->id }}]" value="{{ $facility->name }}">--}}
+                                                        {{--<span class="custom-control-label">{{ $facility->name }}</span>--}}
+                                                    {{--</label>--}}
+                                                {{--</div>--}}
+                                            {{--@endforeach--}}
+                                        {{--</div>--}}
+
                                         <textarea name="facilities" id="facilities" class="summernote">{{ @old('facilities') ? old('facilities') : (@$room->facilities ? $room->facilities : '') }}</textarea>
                                     </div>
 
@@ -152,12 +175,6 @@
                                     <div class="form-group specials">
                                         <label for="specials" class="bmd-label-floating strong-label">Specials <span class="required">*</span></label>
                                         <textarea name="specials" id="specials" class="summernote">{{ @old('specials') ? old('specials') : (@$room->specials ? $room->specials : '') }}</textarea>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="max_guest" class="bmd-label-floating">Max no. of Guest <span class="required">*</span></label>
-                                        <input type="number" class="form-control" id="max_guest" name="max_guest"
-                                               value="{{ @old('max_guest') ? old('max_guest') : (@$room->max_guest ? $room->max_guest : '') }}">
                                     </div>
 
                                     <div class="form-group pt-3">
@@ -172,11 +189,14 @@
                                         <label class="custom-switch">
                                             <input type="checkbox" name="featured" class="custom-switch-input" value="1">
                                             <span class="custom-switch-indicator"></span>
-                                            <span class="custom-switch-description">Featured Room</span>
+                                            <span class="custom-switch-description">Featured</span>
                                         </label>
                                     </div>
 
-                                    <button type="submit" class="btn btn-success btn-block"><i class="fa fa-arrow-right"></i> Next</button>
+                                    <button type="submit" class="btn btn-success btn-block">
+                                        {{ (@$edit ? 'Save' : 'Next') }}
+                                        <i class="fa fa-arrow-right"></i>
+                                    </button>
 
                                 </form>
                             </div>

@@ -22,5 +22,13 @@
                 Supported image types: JPEG, JPG, PNG.
             </small>
         </div>
+        {{--<div class="form-group">--}}
+            {{--<label for="order" class="bmd-label-floating">Image Order</label>--}}
+            {{--<select name="order" id="order" class="col-lg-3 custom-select" data-name="[order]">--}}
+                {{--@for($i = 1; $i <= 10; $i++)--}}
+                    {{--<option value="{{ $i }}">{{ $i }}</option>--}}
+                {{--@endfor--}}
+            {{--</select>--}}
+        {{--</div>--}}
     </div>
 </div>

@@ -18,7 +18,9 @@ Route::get('/features', 'Frontend\FeaturesController@index');
 //Route::get('/blog', 'Frontend\BlogController@index');
 Route::get('/about', 'Frontend\AboutController@index');
 Route::get('/faq', 'Frontend\FaqController@index');
-Route::get('/contact', 'Frontend\ContactController@index');
+
+//Route::get('/contact', 'Frontend\ContactController@index');
+Route::post('/contact/send-message', 'Frontend\ContactController@message');
 
 Route::resource('promotion', 'Frontend\PromotionsController');
 Route::resource('blog', 'Frontend\BlogController')->only([
@@ -27,6 +29,7 @@ Route::resource('blog', 'Frontend\BlogController')->only([
 
 // Booking Routes
 Route::get('/book', 'Frontend\BookController@index');
+Route::get('/book/room-detail/{id}', 'Frontend\BookController@show');
 Route::group(['middleware' => 'auth'], function () {
     Route::post('/book', 'Frontend\BookController@reservation');
     Route::get('/book/book-now', 'Frontend\BookController@book');
@@ -37,6 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/book/checkout', 'Frontend\BookController@snap');
     Route::post('/book/checkout', 'Frontend\BookController@checkout');
     Route::get('/book/finish', 'Frontend\BookController@finish');
+
 //    Route::get('/book/checkout/cc', 'Frontend\BookController@sma');
 
     Route::get('/profile', 'Frontend\ProfileController@index');
@@ -50,9 +54,13 @@ Route::group(['middleware' => ['auth', 'is_admin']], function() {
         Route::get('/', 'Backend\AdminController@index');
         Route::resource('bookings', 'Backend\BookingController');
 
-        Route::resource('rooms', 'Backend\RoomsController');
-        Route::get('rooms/{id}/images', 'Backend\RoomsController@images');
-        Route::post('rooms/images', 'Backend\RoomsController@imagesUpload');
+        Route::resource('rooms', 'Backend\BedroomController');
+        Route::get('rooms/{id}/images', 'Backend\BedroomController@images');
+        Route::post('rooms/images', 'Backend\BedroomController@imagesUpload');
+
+//        Route::resource('rooms', 'Backend\RoomsController');
+//        Route::get('rooms/{id}/images', 'Backend\RoomsController@images');
+//        Route::post('rooms/images', 'Backend\RoomsController@imagesUpload');
 
         Route::resource('promotions', 'Backend\PromotionsController');
         Route::get('promotions/{id}/images', 'Backend\PromotionsController@images');
@@ -62,6 +70,8 @@ Route::group(['middleware' => ['auth', 'is_admin']], function() {
         Route::get('blog/{id}/images', 'Backend\BlogController@images');
         Route::post('blog/images', 'Backend\BlogController@imagesUpload');
 
+        Route::resource('messages', 'Backend\MessageController');
+
         Route::get('/settings', 'Backend\SettingsController@index');
         Route::put('/settings/save', 'Backend\SettingsController@save');
 
@@ -70,6 +80,8 @@ Route::group(['middleware' => ['auth', 'is_admin']], function() {
         Route::get('/settings/faq/{id}/edit', 'Backend\SettingsController@editFaq');
         Route::put('/settings/faq/{id}', 'Backend\SettingsController@updateFaq');
         Route::delete('/settings/faq/{id}', 'Backend\SettingsController@deleteFaq');
+
+        Route::resource('banners', 'Backend\BannerController');
 
     });
 });

@@ -67,8 +67,7 @@
 
                                 <div class="form-group">
                                     <label class="bmd-label-floating" for="answer">Answer</label>
-                                    <input type="text" class="form-control" id="answer" name="answer"
-                                           value="{{ @old('answer') ? old('answer') : (@$edit ? $faq->answer : '') }}" required>
+                                    <textarea name="answer" id="answer" class="form-control" rows="5">{{ @old('answer') ? old('answer') : (@$edit ? $faq->answer : '') }}</textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-success btn-raised float-right mt-2">Save</button>

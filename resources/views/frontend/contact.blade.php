@@ -7,7 +7,7 @@
 @push('style')
     <style>
         .navbar {
-            position: absolute;
+            /*position: absolute;*/
             width: 100%;
         }
         .base {

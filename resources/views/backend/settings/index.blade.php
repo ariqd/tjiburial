@@ -112,7 +112,7 @@
                                 <div class="col-lg-12">
                                     <div class="d-flex justify-content-between">
                                         <h4>FAQs</h4>
-                                        <a href="{{ url('admin/settings/faq') }}" class="btn btn-raised btn-primary btn-sm mb-3">Add New FAQ</a>
+                                        <a href="{{ url('admin/settings/faq') }}" class="btn btn-raised btn-primary btn-sm mb-3"><i class="fa fa-plus"></i> New FAQ</a>
                                     </div>
                                 </div>
                             </div>
@@ -126,7 +126,7 @@
                                     <th>Order</th>
                                     <th>Question</th>
                                     <th>Answer</th>
-                                    <th>Action</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -136,8 +136,12 @@
                                         <td>{{ $faq->question }}</td>
                                         <td>{{ $faq->answer }}</td>
                                         <td>
-                                            <a href="{{ url('admin/settings/faq/'.$faq->id.'/edit') }}" class="btn btn-warning btn-sm">Edit</a>
-                                            <a class="btn btn-danger btn-sm btnDelete" href="#">Delete</a>
+                                            <a href="{{ url('admin/settings/faq/'.$faq->id.'/edit') }}" class="btn btn-warning btn-sm">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a class="btn btn-danger btn-sm btnDelete" href="#">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
                                             <form action="{{ url('admin/settings/faq/'.$faq->id) }}" method="post" class="formDelete" style="display: none;">
                                                 {!! csrf_field() !!}
                                                 {!! method_field('delete') !!}

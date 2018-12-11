@@ -20,7 +20,7 @@
 @push('style')
     <style>
         .navbar {
-            position: absolute;
+            /*position: absolute;*/
             width: 100%;
         }
         .base {
@@ -155,10 +155,10 @@
 
                 $('#myModal').modal('show');
                 $('#okay').on('click', function () {
-                    $('#myModal').modal('hide');
-                    $('#pay-button').html("Please Wait...");
-                    $('#pay-button').attr("disabled", "disabled");
-                    $('#myModal').on('hidden.bs.modal', function (e) {
+                    // $('#myModal').modal('hide');
+                    $('#pay-button').html("Please Wait...").attr("disabled", "disabled");
+                    // $('#pay-button');
+                    $('#myModal').modal('hide').on('hidden.bs.modal', function (e) {
                         $.ajax({
 
                             url: '{{ url('book/payment/getSnapToken') }}',
@@ -216,8 +216,8 @@
 
 @section('content')
     <div class="base">
-        @if(!empty($room->photos()->where('main', 1)->first()->image))
-            <img class="img-fluid" src="{{ asset('uploads') . '/rooms/'.$room->name.'/'.$room->photos()->where('main', 1)->first()->image }}">
+        @if(!empty($room->images()->where('main', 1)->first()->image))
+            <img class="img-fluid" src="{{ asset('uploads') . '/rooms/'.$room->id.'/'.$room->images()->where('main', 1)->first()->image }}">
         @else
             <div class="border p-5" style="margin-top: 100px;">
                 <h4 class="text-center">Coming Soon</h4>
@@ -324,7 +324,7 @@
                                     <tbody>
                                     <tr>
                                         <td>Room Name:</td>
-                                        <td>{{ $room->name }}</td>
+                                        <td>{{ $room->title }}</td>
                                     </tr>
                                     <tr>
                                         <td>Check In Date:</td>

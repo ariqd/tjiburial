@@ -64,21 +64,22 @@
 @endpush
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <h1>Bookings</h1>
+            </div>
+            {{--<div class="col-lg-6">--}}
+            {{--<a href="{{ url('admin/rooms/create') }}" class="btn btn-primary float-right">--}}
+            {{--<i class="fe fe-plus"></i>&nbsp;&nbsp;Add Room--}}
+            {{--</a>--}}
+            {{--</div>--}}
+        </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h1>Bookings</h1>
-                            </div>
-                            {{--<div class="col-lg-6">--}}
-                                {{--<a href="{{ url('admin/rooms/create') }}" class="btn btn-primary float-right">--}}
-                                    {{--<i class="fe fe-plus"></i>&nbsp;&nbsp;Add Room--}}
-                                {{--</a>--}}
-                            {{--</div>--}}
-                        </div>
+
                         @include('backend.templates.feedback')
                         @if(!$bookings->isEmpty())
                             <div class="row mt-3">
@@ -108,8 +109,8 @@
 {{--                                                    <td>{{ $booking->reservation->user->name }}</td>--}}
                                                     <td>{{ $booking->title .' ' . $booking->name }}</td>
                                                     <td>
-                                                        <a href="{{ url('admin/rooms/'.$booking->reservation->room->id) }}">
-                                                            {{ $booking->reservation->room->name }}
+                                                        <a href="{{ url('admin/rooms/'.@$booking->reservation->room->id) }}">
+                                                            {{ @$booking->reservation->room->name }}
                                                         </a>
                                                     </td>
                                                     {{--<td>--}}
@@ -147,6 +148,8 @@
                                     </div>
                                 </div>
                             </div>
+                        @else
+                            <h3 class="text-secondary text-center">No Bookings or Reservations yet.</h3>
                         @endif
                     </div>
                 </div>
